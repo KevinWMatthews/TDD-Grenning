@@ -72,3 +72,13 @@ TEST(CircularBuffer, Capacity)
   LONGS_EQUAL(2, CircularBuffer_Capacity(b));
   CircularBuffer_Destroy(b);
 }
+
+TEST(CircularBuffer, IsFull)
+{
+  for (int i = 0; i < CircularBuffer_Capacity(buffer); i++)
+  {
+    CircularBuffer_Put(buffer, i+100);
+  }
+
+  CHECK_TRUE(CircularBuffer_IsFull(buffer));
+}
