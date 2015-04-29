@@ -36,6 +36,11 @@ int CircularBuffer_IsFull(CircularBuffer self)
 
 int CircularBuffer_Put(CircularBuffer self, int value)
 {
+  if (self->count == self->capacity)
+  {
+    return 0;
+  }
+
   self->values[self->index++] = value;
   self->count++;
   if (self->index == self->capacity)

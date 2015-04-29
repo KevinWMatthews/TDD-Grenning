@@ -136,3 +136,17 @@ TEST(CircularBuffer, PutToFullThrows)
     putManyInTheBuffer(900, CircularBuffer_Capacity(buffer));
     CHECK_FALSE(CircularBuffer_Put(buffer, 9999));
 }
+
+TEST(CircularBuffer, PutToFullDoesNotDamageContents)
+{
+  putManyInTheBuffer(900, CircularBuffer_Capacity(buffer));
+
+  CircularBuffer_Put(buffer, 9999);
+
+  for (int i = 0; i < CircularBuffer_Capacity(buffer); i++)
+  {
+    LONGS_EQUAL(i+900, CircularBuffer_Get(buffer));
+  }
+
+  CHECK_TRUE(CircularBuffer_IsEmpty(buffer));
+}
