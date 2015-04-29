@@ -49,3 +49,19 @@ TEST(CircularBuffer, NotEmptyThenEmpty)
   CircularBuffer_Get(buffer);
   CHECK_TRUE(CircularBuffer_IsEmpty(buffer));
 }
+
+TEST(CircularBuffer, GetPutOneValue)
+{
+  CircularBuffer_Put(buffer, 4567);
+  LONGS_EQUAL(4567, CircularBuffer_Get(buffer));
+}
+
+TEST(CircularBuffer, GetPutAFew)
+{
+  CircularBuffer_Put(buffer, 1);
+  CircularBuffer_Put(buffer, 2);
+  CircularBuffer_Put(buffer, 3);
+  LONGS_EQUAL(1, CircularBuffer_Get(buffer));
+  LONGS_EQUAL(2, CircularBuffer_Get(buffer));
+  LONGS_EQUAL(3, CircularBuffer_Get(buffer));
+}
