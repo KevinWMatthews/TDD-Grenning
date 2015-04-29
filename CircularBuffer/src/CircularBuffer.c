@@ -1,6 +1,8 @@
 #include "CircularBuffer.h"
 #include <stdlib.h>
 
+enum {BUFFER_GUARD = -999};
+
 typedef struct CircularBufferStruct
 {
   int count;      // Current number of entries
@@ -15,6 +17,7 @@ CircularBuffer CircularBuffer_Create(int capacity)
   CircularBuffer self = calloc(1, sizeof(CircularBufferStruct));    // was calloc(capacity,) but I don't know why.
   self->values = calloc(capacity + 1, sizeof(int));
   self->capacity = capacity;
+  self->values[capacity] = BUFFER_GUARD;
   return self;
 }
 
@@ -22,6 +25,11 @@ void CircularBuffer_Destroy(CircularBuffer self)
 {
   free(self->values);
   free(self);
+}
+
+int CircularBuffer_VerifyIntegrity(CircularBuffer self)
+{
+  return self->values[self->capacity] == BUFFER_GUARD;
 }
 
 int CircularBuffer_IsEmpty(CircularBuffer self)

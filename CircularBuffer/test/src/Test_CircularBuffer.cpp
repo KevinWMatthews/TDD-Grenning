@@ -17,6 +17,7 @@ TEST_GROUP(CircularBuffer)
 
   void teardown()
   {
+    CHECK_TRUE(CircularBuffer_VerifyIntegrity(buffer));
     CircularBuffer_Destroy(buffer);
   }
 

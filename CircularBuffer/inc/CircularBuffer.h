@@ -5,6 +5,7 @@ typedef struct CircularBufferStruct * CircularBuffer;
 
 CircularBuffer CircularBuffer_Create(int size);
 void CircularBuffer_Destroy(CircularBuffer self);
+int CircularBuffer_VerifyIntegrity(CircularBuffer self);
 
 int CircularBuffer_IsEmpty(CircularBuffer self);
 int CircularBuffer_IsFull(CircularBuffer self);
