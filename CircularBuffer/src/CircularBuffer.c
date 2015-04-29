@@ -38,12 +38,22 @@ void CircularBuffer_Put(CircularBuffer self, int value)
 {
   self->values[self->index++] = value;
   self->count++;
+  if (self->index == self->capacity)
+  {
+    self->index = 0;
+  }
 }
 
 int CircularBuffer_Get(CircularBuffer self)
 {
+  int value;
   self->count--;
-  return self->values[self->outdex++];
+  value = self->values[self->outdex++];
+  if (self->outdex == self->capacity)
+  {
+    self->outdex = 0;
+  }
+  return value;
 }
 
 int CircularBuffer_Capacity(CircularBuffer self)
