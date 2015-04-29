@@ -35,3 +35,11 @@ TEST(CircularBufferPrint, PrintEmpty)
   CircularBuffer_Print(buffer);
   STRCMP_EQUAL(expectedOutput, actualOutput);
 }
+
+TEST(CircularBufferPrint, PrintAfterOneIsPut)
+{
+  expectedOutput = "Circular buffer content:\n<17>\n";
+  CircularBuffer_Put(buffer, 17);
+  CircularBuffer_Print(buffer);
+  STRCMP_EQUAL(expectedOutput, actualOutput);
+}

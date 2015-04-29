@@ -86,11 +86,21 @@ int CircularBuffer_Capacity(CircularBuffer self)
 
 void CircularBuffer_Print(CircularBuffer self)
 {
+  int i;
+  // We need a counter to increment through our buffer without changing the outdex permanently
+  int currentValue;
   // Format output has rerouted (substituted for with a function pointer)
   // with FormatOutputSpy(). FormatOutputSpy() puts data in our spy buffer
   // (see FormatOutputSpy_Create() to find this buffer;
   //  FormatOutput_GetOutput() examines the data that was placed there).
   FormatOutput("Circular buffer content:\n<");
+
+  currentValue = self->outdex;
+
+  for (i=0; i < self->count; i++)
+  {
+    FormatOutput("%d", self->values[currentValue++]);
+  }
 
   FormatOutput(">\n");
 }
