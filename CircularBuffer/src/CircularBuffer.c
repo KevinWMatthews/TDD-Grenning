@@ -97,13 +97,17 @@ void CircularBuffer_Print(CircularBuffer self)
 
   currentValue = self->outdex;
 
-  for (i=0; i < self->count; i++)
+  for (i = 0; i < self->count; i++)
   {
     if (i != 0)
     {
       FormatOutput(", ");
     }
     FormatOutput("%d", self->values[currentValue++]);
+    if (currentValue >= self->capacity)
+    {
+      currentValue = 0;
+    }
   }
 
   FormatOutput(">\n");
