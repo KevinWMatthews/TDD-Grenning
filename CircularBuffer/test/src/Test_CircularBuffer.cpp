@@ -65,3 +65,10 @@ TEST(CircularBuffer, GetPutAFew)
   LONGS_EQUAL(2, CircularBuffer_Get(buffer));
   LONGS_EQUAL(3, CircularBuffer_Get(buffer));
 }
+
+TEST(CircularBuffer, Capacity)
+{
+  CircularBuffer b = CircularBuffer_Create(2);
+  LONGS_EQUAL(2, CircularBuffer_Capacity(b));
+  CircularBuffer_Destroy(b);
+}

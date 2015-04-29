@@ -45,3 +45,8 @@ int CircularBuffer_Get(CircularBuffer self)
   self->count--;
   return self->values[self->outdex++];
 }
+
+int CircularBuffer_Capacity(CircularBuffer self)
+{
+  return self->capacity;
+}
