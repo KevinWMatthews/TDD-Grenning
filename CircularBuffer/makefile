@@ -7,7 +7,7 @@ OSTYPE:=$(shell uname -o)
 
 ### Directory structure ###
 # Output file
-TARGET_NAME=Utils
+TARGET_NAME=CircularBuffer
 TARGET_DIR=build
 
 # Production code
