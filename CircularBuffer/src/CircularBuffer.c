@@ -34,7 +34,7 @@ int CircularBuffer_IsFull(CircularBuffer self)
   return self->count == self->capacity;
 }
 
-void CircularBuffer_Put(CircularBuffer self, int value)
+int CircularBuffer_Put(CircularBuffer self, int value)
 {
   self->values[self->index++] = value;
   self->count++;

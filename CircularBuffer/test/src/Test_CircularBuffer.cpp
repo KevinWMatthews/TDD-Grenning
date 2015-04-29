@@ -19,6 +19,14 @@ TEST_GROUP(CircularBuffer)
   {
     CircularBuffer_Destroy(buffer);
   }
+
+  void putManyInTheBuffer(int seed, int howMany)
+  {
+    for (int i = 0; i < howMany; i++)
+    {
+      CircularBuffer_Put(buffer, i+seed);
+    }
+  }
 };
 
 TEST(CircularBuffer, Create)
@@ -121,4 +129,10 @@ TEST(CircularBuffer, WrapAround)
 
   LONGS_EQUAL(1000, CircularBuffer_Get(buffer));
   CHECK_TRUE(CircularBuffer_IsEmpty(buffer));
+}
+
+TEST(CircularBuffer, PutToFullThrows)
+{
+    putManyInTheBuffer(900, CircularBuffer_Capacity(buffer));
+    CHECK_FALSE(CircularBuffer_Put(buffer, 9999));
 }
