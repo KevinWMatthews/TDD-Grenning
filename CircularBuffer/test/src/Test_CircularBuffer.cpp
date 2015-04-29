@@ -41,3 +41,11 @@ TEST(CircularBuffer, NotEmpty)
   CircularBuffer_Put(buffer, 10046);
   CHECK_FALSE(CircularBuffer_IsEmpty(buffer));
 }
+
+TEST(CircularBuffer, NotEmptyThenEmpty)
+{
+  CircularBuffer_Put(buffer, 4567);
+  CHECK_FALSE(CircularBuffer_IsEmpty(buffer));
+  CircularBuffer_Get(buffer);
+  CHECK_TRUE(CircularBuffer_IsEmpty(buffer));
+}

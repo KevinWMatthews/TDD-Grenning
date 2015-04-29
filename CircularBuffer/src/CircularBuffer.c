@@ -36,3 +36,8 @@ void CircularBuffer_Put(CircularBuffer self, int value)
 {
   self->values[self->count++] = value;
 }
+
+void CircularBuffer_Get(CircularBuffer self)
+{
+  self->count--;
+}
