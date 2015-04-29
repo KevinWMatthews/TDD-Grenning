@@ -3,6 +3,7 @@
 
 typedef struct CircularBufferStruct
 {
+  int count;
   int * values;    // The actual buffer
 } CircularBufferStruct;
 
@@ -17,4 +18,9 @@ void CircularBuffer_Destroy(CircularBuffer self)
 {
   free(self->values);
   free(self);
+}
+
+int CircularBuffer_IsEmpty(CircularBuffer self)
+{
+  return self->count == 0;
 }
