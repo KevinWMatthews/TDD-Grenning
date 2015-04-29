@@ -8,16 +8,20 @@ extern "C"
 
 TEST_GROUP(CircularBuffer)
 {
+  CircularBuffer buffer;
+
   void setup()
   {
+    buffer = CircularBuffer_Create(10);
   }
 
   void teardown()
   {
+    CircularBuffer_Destroy(buffer);
   }
 };
 
 TEST(CircularBuffer, Create)
 {
-  FAIL("CircularBuffer wired properly!");
+
 }
