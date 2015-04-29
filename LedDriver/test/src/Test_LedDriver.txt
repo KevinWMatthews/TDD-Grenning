@@ -1,0 +1,23 @@
+		LED Driver Tests
+
+~All LEDs off after the driver is initialized
+~Can turn on a single LED
+~Can turn off a single LED
+~Can turn on multiple LEDs
+Can turn off multiple LEDs
+~Can turn on all LEDs
+~Can turn off all LEDs
+~Query LED state
+~Check boundary values
+	~Beyond max breaks nothing
+	~Under min breaks nothing
+	Runtime Error
+	What should really happen?
+~Hardware interaction
+	Oh, really? Hahaha...
+
+Go back and implement runtime error stub (pg 88)
+Go back and impelment executable reminders (ignoring tests) (pg 90)
+Use my data types
+Look into C++ keywords true and false
+Look into BOOL enum/type
