@@ -30,3 +30,8 @@ TEST(CircularBuffer, EmptyAfterCreation)
 {
   CHECK_TRUE(CircularBuffer_IsEmpty(buffer));
 }
+
+TEST(CircularBuffer, NotFullAfterCreation)
+{
+  CHECK_FALSE(CircularBuffer_IsFull(buffer));
+}
