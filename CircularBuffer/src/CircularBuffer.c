@@ -3,9 +3,9 @@
 
 typedef struct CircularBufferStruct
 {
-  int count;
+  int count;      // Current number of entries
   int capacity;
-  int * values;    // The actual buffer
+  int* values;    // The actual buffer
 } CircularBufferStruct;
 
 CircularBuffer CircularBuffer_Create(int capacity)
@@ -30,4 +30,9 @@ int CircularBuffer_IsEmpty(CircularBuffer self)
 int CircularBuffer_IsFull(CircularBuffer self)
 {
   return self->count == self->capacity;
+}
+
+void CircularBuffer_Put(CircularBuffer self, int value)
+{
+  self->values[self->count++] = value;
 }

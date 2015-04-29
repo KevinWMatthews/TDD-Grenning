@@ -8,5 +8,6 @@ void CircularBuffer_Destroy(CircularBuffer self);
 
 int CircularBuffer_IsEmpty(CircularBuffer self);
 int CircularBuffer_IsFull(CircularBuffer self);
+void CircularBuffer_Put(CircularBuffer self, int value);
 
 #endif

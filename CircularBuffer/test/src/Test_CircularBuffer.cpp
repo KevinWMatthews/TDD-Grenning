@@ -35,3 +35,9 @@ TEST(CircularBuffer, NotFullAfterCreation)
 {
   CHECK_FALSE(CircularBuffer_IsFull(buffer));
 }
+
+TEST(CircularBuffer, NotEmpty)
+{
+  CircularBuffer_Put(buffer, 10046);
+  CHECK_FALSE(CircularBuffer_IsEmpty(buffer));
+}
