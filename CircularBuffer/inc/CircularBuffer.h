@@ -12,5 +12,6 @@ int CircularBuffer_IsFull(CircularBuffer self);
 int CircularBuffer_Put(CircularBuffer self, int value);
 int CircularBuffer_Get(CircularBuffer self);
 int CircularBuffer_Capacity(CircularBuffer self);
+void CircularBuffer_Print(CircularBuffer self);
 
 #endif

@@ -1,4 +1,7 @@
 #include "CircularBuffer.h"
+// Is there a way to make the linker throw a warning if the FormatOutput() function isn't found?
+// We need to find a way to avoid a segmentation fault without warning.
+#include "Utils.h"
 #include <stdlib.h>
 
 enum {BUFFER_GUARD = -999};
@@ -79,4 +82,15 @@ int CircularBuffer_Get(CircularBuffer self)
 int CircularBuffer_Capacity(CircularBuffer self)
 {
   return self->capacity;
+}
+
+void CircularBuffer_Print(CircularBuffer self)
+{
+  // Format output has rerouted (substituted for with a function pointer)
+  // with FormatOutputSpy(). FormatOutputSpy() puts data in our spy buffer
+  // (see FormatOutputSpy_Create() to find this buffer;
+  //  FormatOutput_GetOutput() examines the data that was placed there).
+  FormatOutput("Circular buffer content:\n<");
+
+  FormatOutput(">\n");
 }

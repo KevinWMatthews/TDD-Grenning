@@ -5,6 +5,7 @@ extern "C"
   #include "CircularBuffer.h"
   #include "Utils.h"
   #include "FormatOutputSpy.h"
+  #include <stdio.h>
 }
 
 TEST_GROUP(CircularBufferPrint)
@@ -28,7 +29,9 @@ TEST_GROUP(CircularBufferPrint)
   }
 };
 
-TEST(CircularBufferPrint, WiringCheck)
+TEST(CircularBufferPrint, PrintEmpty)
 {
-  FAIL("CircularBufferPrint wiring check");
+  expectedOutput = "Circular buffer content:\n<>\n";
+  CircularBuffer_Print(buffer);
+  STRCMP_EQUAL(expectedOutput, actualOutput);
 }
