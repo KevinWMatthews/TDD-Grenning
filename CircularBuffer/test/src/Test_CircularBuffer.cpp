@@ -82,3 +82,20 @@ TEST(CircularBuffer, IsFull)
 
   CHECK_TRUE(CircularBuffer_IsFull(buffer));
 }
+
+TEST(CircularBuffer, EmptyToFullToEmpty)
+{
+  for (int i = 0; i < CircularBuffer_Capacity(buffer); i++)
+  {
+    CircularBuffer_Put(buffer, i+100);
+  }
+  CHECK_TRUE(CircularBuffer_IsFull(buffer));
+
+  for (int j = 0; j < CircularBuffer_Capacity(buffer); j++)
+  {
+    LONGS_EQUAL(j+100, CircularBuffer_Get(buffer));
+  }
+
+  CHECK_TRUE(CircularBuffer_IsEmpty(buffer));
+  CHECK_FALSE(CircularBuffer_IsFull(buffer));
+}
