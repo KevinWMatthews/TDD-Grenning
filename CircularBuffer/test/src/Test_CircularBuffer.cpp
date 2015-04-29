@@ -150,3 +150,9 @@ TEST(CircularBuffer, PutToFullDoesNotDamageContents)
 
   CHECK_TRUE(CircularBuffer_IsEmpty(buffer));
 }
+
+//Hmmm, this test didn't fail... memory leak?
+TEST(CircularBuffer, GetFromEmptyReturns0)
+{
+  LONGS_EQUAL(0, CircularBuffer_Get(buffer));
+}
