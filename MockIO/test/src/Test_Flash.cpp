@@ -25,14 +25,14 @@ TEST_GROUP(Flash)
 void IO_Write(ioAddress addr, ioData data)
 {
   mock().actualCall("IO_Write")
-        .withParameter("addr", addr)
+        .withParameter("addr", (int)addr)   // for some reason uint32_t won't be converted to int properly on Linux
         .withParameter("data", data);
 }
 
 ioData IO_Read(ioAddress addr)
 {
   mock().actualCall("IO_Read")
-        .withParameter("addr", addr);
+        .withParameter("addr", (int)addr);
   return mock().intReturnValue();
 }
 
@@ -48,15 +48,15 @@ TEST(Flash, WriteSucceeds_ReadyImmediately)
         .withParameter("data", ProgramCommand);
   // MockIO_Expect_Write(address, data);
   mock().expectOneCall("IO_Write")
-        .withParameter("addr", address)
+        .withParameter("addr", (int)address)
         .withParameter("data", data);
   // MockIO_Expect_ReadThenReturn(StatusRegister, ReadyBit);
   mock().expectOneCall("IO_Read")
-        .withParameter("addr", StatusRegister)
+        .withParameter("addr", (int)StatusRegister)
         .andReturnValue(ReadyBit);
   // MockIO_Expect_ReadThenReturn(address, data);
   mock().expectOneCall("IO_Read")
-        .withParameter("addr", address)
+        .withParameter("addr", (int)address)
         .andReturnValue(data);
   result = Flash_Write(address, data);
   LONGS_EQUAL(FLASH_SUCCESS, result);
