@@ -235,3 +235,22 @@ TEST(Flash, WriteFails_Timeout)
   result = Flash_Write(address, data);
   LONGS_EQUAL(FLASH_TIMEOUT_ERROR, result);
 }
+
+TEST(Flash, WriteFails_TimeoutAtEndOfTime)
+{
+  FakeMicroTime_Init(0xffffffff, 500);
+  mock().expectOneCall("IO_Write")
+        .withParameter("addr", CommandRegister)
+        .withParameter("data", ProgramCommand);
+  mock().expectOneCall("IO_Write")
+        .withParameter("addr", (int)address)
+        .withParameter("data", data);
+  for (int i = 0; i < 10; i++)
+  {
+  mock().expectOneCall("IO_Read")
+        .withParameter("addr", (int)StatusRegister)
+        .andReturnValue(~ReadyBit);
+  }
+  result = Flash_Write(address, data);
+  LONGS_EQUAL(FLASH_TIMEOUT_ERROR, result);
+}
