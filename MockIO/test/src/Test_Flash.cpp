@@ -152,3 +152,23 @@ TEST(Flash, WriteFails_ProtectedBlockError)
 
     LONGS_EQUAL(FLASH_PROTECTED_BLOCK_ERROR, result);
 }
+
+TEST(Flash, WriteFails_FlashUnknownProgramError)
+{
+  mock().expectOneCall("IO_Write")
+        .withParameter("addr", CommandRegister)
+        .withParameter("data", ProgramCommand);
+  mock().expectOneCall("IO_Write")
+        .withParameter("addr", (int)address)
+        .withParameter("data", data);
+  mock().expectOneCall("IO_Read")
+        .withParameter("addr", (int)StatusRegister)
+        .andReturnValue(ReadyBit |  EraseSuspendBit | EraseErrorBit | ProgramSuspendBit | ReservedBit);
+  mock().expectOneCall("IO_Write")
+        .withParameter("addr", CommandRegister)
+        .withParameter("data", Reset);
+
+  result = Flash_Write(address, data);
+
+  LONGS_EQUAL(FLASH_UNKNOWN_PROGRAM_ERROR, result);
+}
