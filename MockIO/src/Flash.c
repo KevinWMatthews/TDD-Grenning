@@ -12,6 +12,11 @@ int Flash_Write(ioAddress address, ioData data)
   {
     status = IO_Read(StatusRegister);
   }
+  if (status != ReadyBit)
+  {
+    IO_Write(CommandRegister, Reset);
+    return FLASH_VPP_ERROR;
+  }
 
   IO_Read(address);
   return FLASH_SUCCESS;

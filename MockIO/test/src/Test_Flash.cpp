@@ -11,8 +11,15 @@ extern "C"
 
 TEST_GROUP(Flash)
 {
+  ioAddress address;
+  ioData data;
+  int result;
+
   void setup()
   {
+    address = 0x1000;
+    data = 0xBEEF;
+    result = -1;
   }
   void teardown()
   {
@@ -38,10 +45,6 @@ ioData IO_Read(ioAddress addr)
 
 TEST(Flash, WriteSucceeds_ReadyImmediately)
 {
-  ioAddress address = 0x1000;
-  ioData data = 0xBEEF;
-  int result = -1;
-
   // MockIO_Expect_Write(CommandRegister, ProgramCommand);
   mock().expectOneCall("IO_Write")
         .withParameter("addr", CommandRegister)
@@ -65,10 +68,6 @@ TEST(Flash, WriteSucceeds_ReadyImmediately)
 
 TEST(Flash, SucceedsNotImmediatelyReady)
 {
-  ioAddress address = 0x1000;
-  ioData data = 0xBEEF;
-  int result = -1;
-
   // MockIO_Expect_Write(CommandRegister, ProgramCommand);
   mock().expectOneCall("IO_Write")
         .withParameter("addr", CommandRegister)
@@ -94,4 +93,23 @@ TEST(Flash, SucceedsNotImmediatelyReady)
 
   result = Flash_Write(address, data);
   LONGS_EQUAL(FLASH_SUCCESS, result);
+}
+
+TEST(Flash, WriteFails_VppError)
+{
+  mock().expectOneCall("IO_Write")
+        .withParameter("addr", CommandRegister)
+        .withParameter("data", ProgramCommand);
+  mock().expectOneCall("IO_Write")
+        .withParameter("addr", (int)address)
+        .withParameter("data", data);
+  mock().expectOneCall("IO_Read")
+        .withParameter("addr", (int)StatusRegister)
+        .andReturnValue(ReadyBit | VppErrorBit);
+  mock().expectOneCall("IO_Write")
+        .withParameter("addr", CommandRegister)
+        .withParameter("data", Reset);
+
+  result = Flash_Write(address, data);
+  LONGS_EQUAL(FLASH_VPP_ERROR, result);
 }
