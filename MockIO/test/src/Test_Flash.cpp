@@ -62,3 +62,36 @@ TEST(Flash, WriteSucceeds_ReadyImmediately)
   LONGS_EQUAL(FLASH_SUCCESS, result);
   mock().checkExpectations();
 }
+
+TEST(Flash, SucceedsNotImmediatelyReady)
+{
+  ioAddress address = 0x1000;
+  ioData data = 0xBEEF;
+  int result = -1;
+
+  // MockIO_Expect_Write(CommandRegister, ProgramCommand);
+  mock().expectOneCall("IO_Write")
+        .withParameter("addr", CommandRegister)
+        .withParameter("data", ProgramCommand);
+  // MockIO_Expect_Write(address, data);
+  mock().expectOneCall("IO_Write")
+        .withParameter("addr", (int)address)
+        .withParameter("data", data);
+  // MockIO_Expect_ReadThenReturn(StatusRegister, 0);
+  // MockIO_Expect_ReadThenReturn(StatusRegister, 0);
+  // MockIO_Expect_ReadThenReturn(StatusRegister, 0);
+  mock().expectNCalls(3, "IO_Read")
+        .withParameter("addr", (int)StatusRegister)
+        .andReturnValue(0);
+  // MockIO_Expect_ReadThenReturn(StatusRegister, ReadyBit);
+  mock().expectOneCall("IO_Read")
+        .withParameter("addr", (int)StatusRegister)
+        .andReturnValue(ReadyBit);
+  // MockIO_Expect_ReadThenReturn(address, data);
+  mock().expectOneCall("IO_Read")
+        .withParameter("addr", (int)address)
+        .andReturnValue(data);
+
+  result = Flash_Write(address, data);
+  LONGS_EQUAL(FLASH_SUCCESS, result);
+}

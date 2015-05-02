@@ -5,7 +5,10 @@ int Flash_Write(ioAddress address, ioData data)
 {
   IO_Write(CommandRegister, ProgramCommand);
   IO_Write(address, data);
-  IO_Read(StatusRegister);
+  while (IO_Read(StatusRegister) == 0)
+  {
+    ;   // Loop until ready; not dangerous at all ;)
+  }
   IO_Read(address);
   return FLASH_SUCCESS;
 }
