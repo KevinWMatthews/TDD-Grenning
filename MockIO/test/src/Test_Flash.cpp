@@ -113,3 +113,22 @@ TEST(Flash, WriteFails_VppError)
   result = Flash_Write(address, data);
   LONGS_EQUAL(FLASH_VPP_ERROR, result);
 }
+
+TEST(Flash, WriteFails_ProgramError)
+{
+  mock().expectOneCall("IO_Write")
+        .withParameter("addr", CommandRegister)
+        .withParameter("data", ProgramCommand);
+  mock().expectOneCall("IO_Write")
+        .withParameter("addr", (int)address)
+        .withParameter("data", data);
+  mock().expectOneCall("IO_Read")
+        .withParameter("addr", (int)StatusRegister)
+        .andReturnValue(ReadyBit | ProgramErrorBit);
+  mock().expectOneCall("IO_Write")
+        .withParameter("addr", CommandRegister)
+        .withParameter("data", Reset);
+
+  result = Flash_Write(address, data);
+  LONGS_EQUAL(FLASH_PROGRAM_ERROR, result);
+}
