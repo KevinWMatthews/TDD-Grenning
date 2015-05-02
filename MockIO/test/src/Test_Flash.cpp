@@ -3,6 +3,7 @@ extern "C"
   #include "Flash.h"  // Code under test
   #include "IO.h"     // Communicate with hardware
   #include "m28w160ect.h"
+  #include "FakeMicroTime.h"
 }
 
 #include "CppUTest/TestHarness.h"
@@ -214,4 +215,23 @@ TEST(Flash, WriteSucceeds_IgnoresOtherBitsUntilReady)
     result = Flash_Write(address, data);
 
     LONGS_EQUAL(FLASH_SUCCESS, result);
+}
+
+TEST(Flash, WriteFails_Timeout)
+{
+  FakeMicroTime_Init(0, 500);
+  mock().expectOneCall("IO_Write")
+        .withParameter("addr", CommandRegister)
+        .withParameter("data", ProgramCommand);
+  mock().expectOneCall("IO_Write")
+        .withParameter("addr", (int)address)
+        .withParameter("data", data);
+  for (int i = 0; i < 10; i++)
+  {
+    mock().expectOneCall("IO_Read")
+          .withParameter("addr", (int)StatusRegister)
+          .andReturnValue(~ReadyBit);
+  }
+  result = Flash_Write(address, data);
+  LONGS_EQUAL(FLASH_TIMEOUT_ERROR, result);
 }
