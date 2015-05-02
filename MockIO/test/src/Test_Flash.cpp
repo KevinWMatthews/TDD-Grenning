@@ -172,3 +172,23 @@ TEST(Flash, WriteFails_FlashUnknownProgramError)
 
   LONGS_EQUAL(FLASH_UNKNOWN_PROGRAM_ERROR, result);
 }
+
+TEST(Flash, WriteFails_FlashReadBackError)
+{
+  mock().expectOneCall("IO_Write")
+        .withParameter("addr", CommandRegister)
+        .withParameter("data", ProgramCommand);
+  mock().expectOneCall("IO_Write")
+        .withParameter("addr", (int)address)
+        .withParameter("data", data);
+  mock().expectOneCall("IO_Read")
+        .withParameter("addr", (int)StatusRegister)
+        .andReturnValue(ReadyBit);
+  mock().expectOneCall("IO_Read")
+        .withParameter("addr", (int)address)
+        .andReturnValue(data-1);    // bad data
+
+  result = Flash_Write(address, data);
+
+    LONGS_EQUAL(FLASH_READ_BACK_ERROR, result);
+}

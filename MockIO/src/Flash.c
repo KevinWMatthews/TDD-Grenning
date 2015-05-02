@@ -25,6 +25,8 @@ int Flash_Write(ioAddress address, ioData data)
       return FLASH_UNKNOWN_PROGRAM_ERROR;
   }
 
-  IO_Read(address);
+  if (data != IO_Read(address))
+    return FLASH_READ_BACK_ERROR;
+
   return FLASH_SUCCESS;
 }
