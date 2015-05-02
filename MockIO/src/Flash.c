@@ -3,12 +3,16 @@
 
 int Flash_Write(ioAddress address, ioData data)
 {
+  ioData status = 0;
+
   IO_Write(CommandRegister, ProgramCommand);
   IO_Write(address, data);
-  while (IO_Read(StatusRegister) == 0)
+
+  while ((status & ReadyBit) == 0)
   {
-    ;   // Loop until ready; not dangerous at all ;)
+    status = IO_Read(StatusRegister);
   }
+
   IO_Read(address);
   return FLASH_SUCCESS;
 }
