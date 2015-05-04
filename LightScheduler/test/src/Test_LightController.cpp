@@ -1,6 +1,7 @@
 extern "C"
 {
   #include "LightController.h"
+  #include "LightDriverSpy.h"
 }
 
 #include "CppUTest/TestHarness.h"
@@ -10,10 +11,13 @@ TEST_GROUP(LightController)
 {
   void setup()
   {
+    LightController_Create();
+    LightDriverSpy_AddSpiesToController();
   }
 
   void teardown()
   {
+    LightController_Destroy();
   }
 };
 

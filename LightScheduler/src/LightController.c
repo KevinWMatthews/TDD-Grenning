@@ -29,10 +29,10 @@ static void destroy(LightDriver driver)
     X10LightDriver_Destroy(driver);
     break;
   case AcmeWireless:
-    AcmeWirelessLightDriver_Destroy(driver);
+    // AcmeWirelessLightDriver_Destroy(driver);
     break;
   case MemoryMapped:
-    MemMappedLightDriver_Destroy(driver);
+    // MemMappedLightDriver_Destroy(driver);
     break;
   case TestLightDriver:
     LightDriverSpy_Destroy(driver);
@@ -77,10 +77,10 @@ void LightController_TurnOn(int id)
     X10LightDriver_TurnOn(driver);
     break;
   case AcmeWireless:
-    AcmeWirelessLightDriver_TurnOn(driver);
+    // AcmeWirelessLightDriver_TurnOn(driver);
     break;
   case MemoryMapped:
-    MemMappedLightDriver_TurnOn(driver);
+    // MemMappedLightDriver_TurnOn(driver);
     break;
   case TestLightDriver:
     LightDriverSpy_TurnOn(driver);  //Test code?
@@ -103,10 +103,10 @@ void LightController_TurnOff(int id)
     X10LightDriver_TurnOff(driver);
     break;
   case AcmeWireless:
-    AcmeWirelessLightDriver_TurnOff(driver);
+    // AcmeWirelessLightDriver_TurnOff(driver);
     break;
   case MemoryMapped:
-    MemMappedLightDriver_TurnOff(driver);
+    // MemMappedLightDriver_TurnOff(driver);
     break;
   case TestLightDriver:
     LightDriverSpy_TurnOff(driver);

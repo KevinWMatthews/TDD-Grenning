@@ -7,6 +7,8 @@ typedef enum
   TRUE =  1
 } BOOL;
 
+#ifndef NULL
 #define NULL 0
+#endif
 
 #endif
