@@ -5,7 +5,7 @@ typedef struct LightDriverStruct* LightDriver;
 
 typedef enum LightDriverType
 {
-  TestLightDriver,
+  TestLightDriver,    // Wait, this is test code!
   X10,
   AcmeWireless,
   MemoryMapped
