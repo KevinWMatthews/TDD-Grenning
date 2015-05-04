@@ -55,7 +55,7 @@ TEST_GROUP(LightSchedulerRandomize)
   }
 };
 
-TEST(LightSchedulerRandomize, TurnsOnEarly)
+IGNORE_TEST(LightSchedulerRandomize, TurnsOnEarly)
 {
   FakeRandomMinute_SetFirstAndIncrement(-10, 5);
   LightScheduler_ScheduleTurnOn(4, EVERYDAY, 600);
