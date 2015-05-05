@@ -1,7 +1,3 @@
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "TimeService.h"
 #include "FakeTimeService.h"
 #include "DataTypes.h"
@@ -76,7 +72,3 @@ int FakeTimeService_GetAlarmPeriod(void)
 {
   return period;
 }
-
-#ifdef __cplusplus
-}
-#endif

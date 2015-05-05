@@ -7,10 +7,10 @@ OSTYPE:=$(shell uname -o)
 
 ### Directory structure ###
 # Output file
-TARGET_NAME=LightScheduler
+TARGET_NAME=Example
 TARGET_DIR=build
 
-# Production code
+# List all production code
 SRC_DIRS=src
 INC_DIRS=inc
 LIB_DIRS=
@@ -25,7 +25,7 @@ ifeq ("$(OSTYPE)","Cygwin")
 CPPUTEST_LIB_DIR=/usr/local/lib
 endif
 
-# User unit tests
+# List all user unit tests
 TEST_DIR=test
 TEST_SRC_DIRS=$(TEST_DIR)/src $(TEST_DIR)/mock
 TEST_INC_DIR=$(TEST_DIR)/inc

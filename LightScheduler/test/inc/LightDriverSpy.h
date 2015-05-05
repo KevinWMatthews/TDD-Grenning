@@ -1,10 +1,6 @@
 #ifndef LightDriverSpy_H_
 #define LightDriverSpy_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "LightDriver.h"
 #include "LightController.h"
 
@@ -26,7 +22,3 @@ enum {
 };
 
 #endif  /* D_LightDriverSpy_H */
-
-#ifdef __cplusplus
-}
-#endif

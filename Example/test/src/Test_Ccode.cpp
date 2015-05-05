@@ -1,13 +1,13 @@
 extern "C"
 {
-  #include "Example.h"
+  #include "Ccode.h"
 }
 
 //CppUTest includes should be after your and system includes
 #include "CppUTest/TestHarness.h"
-#include "Test_Example.h"
+#include "Test_Ccode.h"
 
-TEST_GROUP(Example)
+TEST_GROUP(Ccode)
 {
   void setup()
   {
@@ -18,7 +18,7 @@ TEST_GROUP(Example)
   }
 };
 
-TEST(Example, DependencyCheck)
+TEST(Ccode, DependencyCheck)
 {
-  LONGS_EQUAL(2, func(2));
+  LONGS_EQUAL(2, Ccode_func(2));
 }

@@ -1,10 +1,3 @@
-// // I have test code being compiled by g++
-// // Might need to revisit the makefile to make sure the spies, doubles,
-// // and any other C-based test code is compiled approprieately.
-// #ifdef __cplusplus
-// extern "C" {
-// #endif
-
 // #include "LightController.h"
 // #include "LightControllerSpy.h"
 // #include <string.h>
@@ -57,7 +50,3 @@
 // {
 //   return lights[id];
 // }
-
-// #ifdef __cplusplus
-// }
-// #endif

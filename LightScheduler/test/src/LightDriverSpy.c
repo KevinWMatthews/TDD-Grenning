@@ -1,7 +1,3 @@
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stdlib.h>
 #include <memory.h>
 #include "LightDriverSpy.h"
@@ -87,7 +83,3 @@ int LightDriverSpy_GetLastState(void)
 {
     return lastState;
 }
-
-#ifdef __cplusplus
-}
-#endif

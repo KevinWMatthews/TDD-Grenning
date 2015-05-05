@@ -18,7 +18,7 @@ TARGET=$(TARGET_DIR)/$(TARGET_NAME)
 
 ### Generate and set flags ###
 # Production code
-COMPILER_FLAGS = -c
+COMPILER_FLAGS = -c -MMD -MP
 INCLUDE_FLAGS=$(addprefix -I,$(INC_DIRS))
 LINKER_FLAGS=$(addprefix -L,$(LIB_DIRS))
 LINKER_FLAGS+=$(addprefix -l,$(LIB_LIST))
@@ -52,8 +52,11 @@ endif
 # Production source code
 SRC=$(call get_src_from_dir_list,$(SRC_DIRS))
 #nest calls so we don't get a repetition of .c and .cpp files
-src_obj=$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(SRC)))
-SRC_OBJ=$(addprefix $(OBJ_DIR)/,$(src_obj))
+src_to=$(patsubst %.c,%$1,$(patsubst %.cpp,%$1,$(SRC)))
+src_to_o=$(call src_to,.o,$1)
+SRC_OBJ=$(addprefix $(OBJ_DIR)/,$(src_to_o))
+src_to_d=$(call src_to,.d,$1)
+SRC_DEP=$(addprefix $(OBJ_DIR)/,$(src_to_d))
 INC=$(call get_inc_from_dir_list,$(INC_DIRS))
 LIBS=$(addprefix lib,$(addsuffix .a,$(LIB_LIST)))
 
@@ -64,14 +67,18 @@ TEST_TARGET=$(TEST_TARGET_DIR)/$(TARGET_NAME)_test
 TARGET_LIB=$(TEST_TARGET_DIR)/$(addsuffix .a,$(addprefix lib,$(TARGET_NAME)))
 
 TEST_SRC=$(call get_src_from_dir_list,$(TEST_SRC_DIRS))
-test_obj=$(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(TEST_SRC)))
-TEST_OBJ=$(addprefix $(TEST_OBJ_DIR)/,$(test_obj))
+test_src_to=$(patsubst %.c,%$1,$(patsubst %.cpp,%$1,$(TEST_SRC)))
+test_src_to_o=$(call test_src_to,.o,$1)
+TEST_OBJ=$(addprefix $(TEST_OBJ_DIR)/,$(test_src_to_o))
+test_src_to_d=$(call test_src_to,.d,$1)
+TEST_DEP=$(addprefix $(TEST_OBJ_DIR)/,$(test_src_to_d))
 TEST_INC=$(call get_inc_from_dir,$(TEST_INC_DIR))
 TEST_LIBS=$(addprefix lib,$(addsuffix .a,$(TEST_LIB_LIST)))
 
 # CppUTest test harness source code
 CPPUTEST_LIBS=$(addprefix lib,$(addsuffix .a,$(CPPUTEST_LIB_LIST)))
 
+DEP_FILES=$(SRC_DEP) $(TEST_DEP)
 
 ### Helper functions ###
 get_subdirs = $(patsubst %/,%,$(sort $(dir $(wildcard $1*/))))
@@ -112,14 +119,14 @@ $(TARGET): $(SRC_OBJ) $(MCU_OBJ)
 	$(ECHO) "\n${Yellow}Linking $(notdir $@)...${NoColor}"
 	$(ECHO) "${DarkGray}Production${NoColor}"
 	$(SILENCE)mkdir -p $(dir $@)
-	$(SILENCE)$(LINKER) $^ -o $@ $(LINKER_FLAGS)
+	$(SILENCE)$(C_LINKER) $^ -o $@ $(LINKER_FLAGS)
 	$(ECHO) "${Green}...Executable created!\n${NoColor}"
 
 $(OBJ_DIR)/%.o: %.c
 	$(ECHO) "\n${Yellow}Compiling $(notdir $<)...${NoColor}"
 	$(ECHO) "${DarkGray}Production${NoColor}"
 	$(SILENCE)mkdir -p $(dir $@)
-	$(SILENCE)$(COMPILER) $(COMPILER_FLAGS) $< $(INCLUDE_FLAGS) $(MCU_INCLUDE_FLAGS) -o $@
+	$(SILENCE)$(C_COMPILER) $(COMPILER_FLAGS) $< $(INCLUDE_FLAGS) $(MCU_INCLUDE_FLAGS) -o $@
 
 clean:
 	$(ECHO) "${Yellow}Cleaning project...${NoColor}"
@@ -127,12 +134,6 @@ clean:
 	$(SILENCE)rm -rf $(OBJ_DIR)
 	$(SILENCE)rm -rf $(TEST_OBJ_DIR)
 	$(SILENCE)rm -rf $(TEST_TARGET_DIR)
-	$(ECHO) "${Green}...Clean finished!${NoColor}\n"
-
-cleanp:
-	$(ECHO) "${Yellow}Cleaning production code...${NoColor}"
-	$(SILENCE)rm -rf $(TARGET_DIR)
-	$(SILENCE)rm -rf $(OBJ_DIR)
 	$(ECHO) "${Green}...Clean finished!${NoColor}\n"
 
 
@@ -149,19 +150,13 @@ rebuildt:
 	$(ECHO) "${Blue}"
 	make test
 
-cleant:
-	$(ECHO) "${Yellow}Cleaning test code...${NoColor}"
-	$(SILENCE)rm -rf $(TEST_OBJ_DIR)
-	$(SILENCE)rm -rf $(TEST_TARGET_DIR)
-	$(ECHO) "${Green}...Clean finished!${NoColor}\n"
-
 # Be SURE to link the test objects before the source code library!!
 # This is what enables link-time substitution
 $(TEST_TARGET): $(TEST_OBJ) $(TARGET_LIB)
 	$(ECHO) "\n${Yellow}Linking $(notdir $@)...${NoColor}"
 	$(ECHO) "${DarkGray}test${NoColor}"
 	$(SILENCE)mkdir -p $(dir $@)
-	$(SILENCE)$(TEST_LINKER) -o $@ $^ $(LINKER_FLAGS) $(TEST_LINKER_FLAGS) $(CPPUTEST_LINKER_FLAGS)
+	$(SILENCE)$(CPP_LINKER) -o $@ $^ $(LINKER_FLAGS) $(TEST_LINKER_FLAGS) $(CPPUTEST_LINKER_FLAGS)
 
 #Target source code library is placed in the test folder because the production build doesn't use it
 $(TARGET_LIB): $(SRC_OBJ)
@@ -173,13 +168,18 @@ $(TEST_OBJ_DIR)/%.o: %.c
 	$(ECHO) "\n${Yellow}Compiling $(notdir $<)...${NoColor}"
 	$(SILENCE)mkdir -p $(dir $@)
 	$(ECHO) "${DarkGray}test${NoColor}"
-	$(SILENCE)$(TEST_COMPILER) $(COMPILER_FLAGS) $< -o $@ $(INCLUDE_FLAGS) $(TEST_INCLUDE_FLAGS)
+	$(SILENCE)$(C_COMPILER) $(COMPILER_FLAGS) $< -o $@ $(INCLUDE_FLAGS) $(TEST_INCLUDE_FLAGS)
 
 $(TEST_OBJ_DIR)/%.o: %.cpp
 	$(ECHO) "\n${Yellow}Compiling $(notdir $<)...${NoColor}"
 	$(SILENCE)mkdir -p $(dir $@)
 	$(ECHO) "${DarkGray}test${NoColor}"
-	$(SILENCE)$(TEST_COMPILER) $(COMPILER_FLAGS) $< -o $@ $(INCLUDE_FLAGS) $(TEST_INCLUDE_FLAGS)
+	$(SILENCE)$(CPP_COMPILER) $(COMPILER_FLAGS) $< -o $@ $(INCLUDE_FLAGS) $(TEST_INCLUDE_FLAGS)
+
+# MAKECMDGOALS is a special variable that is set by Make
+ifneq "$(MAKECMDGOALS)" "clean"
+-include $(DEP_FILES)
+endif
 
 
 ### Targets for debugging this makefile ###
@@ -204,9 +204,13 @@ dirlist:
 filelist:
 	$(call techo,TARGET,$(TARGET))
 
+	$(ECHO) "\n${BoldCyan}All Dependencies:${NoColor}"
+	$(call techo,DEP_FILES,$(DEP_FILES))
+
 	$(ECHO) "\n${BoldCyan}Production code:${NoColor}"
 	$(call techo,SRC,$(SRC))
 	$(call techo,SRC_OBJ,$(SRC_OBJ))
+	$(call techo,SRC_DEP,$(SRC_DEP))
 	$(call techo,INC,$(INC))
 	$(call techo,LIBS,$(LIBS))
 
@@ -215,6 +219,7 @@ filelist:
 	$(call techo,TEST_TARGET,$(TEST_TARGET))
 	$(call techo,TEST_SRC,$(TEST_SRC))
 	$(call techo,TEST_OBJ,$(TEST_OBJ))
+	$(call techo,TEST_DEP,$(TEST_DEP))
 	$(call techo,TEST_INC,$(TEST_INC))
 	$(call techo,TEST_LIBS,$(TEST_LIBS))
 
@@ -297,6 +302,10 @@ NC         =\033[0;0m
 # $@	the name of the target
 # $<	the name of the first prerequisite
 # $^	the names of all prerequisites separated by a space
+
+# (look into these more)
+# -MMD  Output a list of dependencies to a .d file
+# -MP   Something fancy about creating a phony target for .h files that are moved/removed
 
 #ar [-]p [mod] <archive> <members ...>
 #p:
