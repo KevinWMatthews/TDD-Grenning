@@ -83,7 +83,8 @@ get_inc_from_dir = $(wildcard $1/*.h)
 get_inc_from_dir_list = $(foreach dir, $1, $(call get_inc_from_dir,$(dir)))
 remove_dotdot=$(patsubst ../%,%,$1)
 remove_dot=$(patsubst ./%,%,$1)
-clean_path=$(call remove_dot,$(call remove_dotdot,$1))
+#Hahaha, need to loop this ;)
+clean_path=$(call remove_dot,$(call remove_dotdot,$(call remove_dotdot,$(call remove_dotdot,$1))))
 #nest calls so we don't get a repetition of .c and .cpp files
 src_to=$(patsubst %.c,%$1,$(patsubst %.cpp,%$1,$2))
 src_to_o=$(call src_to,.o,$1)
@@ -161,13 +162,13 @@ $(TARGET_LIB): $(SRC_OBJ)
 	$(SILENCE)mkdir -p $(dir $@)
 	$(SILENCE)$(ARCHIVER) $(ARCHIVER_FLAGS) $@ $^
 
-$(TEST_OBJ_DIR)/%.o: %.c
+$(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.c
 	$(ECHO) "\n${Yellow}Compiling $(notdir $<)...${NoColor}"
 	$(SILENCE)mkdir -p $(dir $@)
 	$(ECHO) "${DarkGray}test${NoColor}"
 	$(SILENCE)$(C_COMPILER) $(COMPILER_FLAGS) $< -o $@ $(INCLUDE_FLAGS) $(TEST_INCLUDE_FLAGS)
 
-$(TEST_OBJ_DIR)/%.o: %.cpp
+$(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp
 	$(ECHO) "\n${Yellow}Compiling $(notdir $<)...${NoColor}"
 	$(SILENCE)mkdir -p $(dir $@)
 	$(ECHO) "${DarkGray}test${NoColor}"
@@ -199,6 +200,9 @@ dirlist:
 	$(ECHO) "${BoldRed}Learn how to detect if CppUTest is installed!"
 
 filelist:
+	$(ECHO) "\n${BoldCyan}Directory of MakefileWorker.make:${NoColor}"
+	$(ECHO) "$(shell pwd)\n"
+
 	$(call techo,TARGET,$(TARGET))
 
 	$(ECHO) "\n${BoldCyan}All Dependencies:${NoColor}"

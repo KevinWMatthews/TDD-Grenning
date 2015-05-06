@@ -1,34 +1,34 @@
 all:
-	make --file MakefileCppUTest.make
+	make -C src --file MakefileCppUTest.make
 
 test:
-	make --file MakefileCppUTest.make test
+	make -C src --file MakefileCppUTest.make test
 
 run:
-	make --file MakefileCppUTest.make run
+	make -C src --file MakefileCppUTest.make run
 
 clean:
-	make --file MakefileCppUTest.make clean
+	make -C src --file MakefileCppUTest.make clean
 
 rebuild:
-	make --file MakefileCppUTest.make rebuild
+	make -C src --file MakefileCppUTest.make rebuild
 
 rebuildt:
-	make --file MakefileCppUTest.make rebuildt
+	make -C src --file MakefileCppUTest.make rebuildt
 
 
 #Makefile debug options
 filelist:
-	make --file MakefileCppUTest.make filelist
+	make -C src --file MakefileCppUTest.make filelist
 
 dirlist:
-	make --file MakefileCppUTest.make dirlist
+	make -C src --file MakefileCppUTest.make dirlist
 
 flags:
-	make --file MakefileCppUTest.make flags
+	make -C src --file MakefileCppUTest.make flags
 
 colortest:
-	make --file MakefileCppUTest.make colortest
+	make -C src --file MakefileCppUTest.make colortest
 
 help:
-	make --file MakefileCppUTest.make help
+	make -C src --file MakefileCppUTest.make help

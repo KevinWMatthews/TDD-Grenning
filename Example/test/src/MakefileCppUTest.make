@@ -3,9 +3,12 @@ ifndef SILENCE
 	SILENCE =
 endif
 
+#Can currently only nest three subdirectories (see clean_path in MakefileWorker.make)
+#until I figure out how to loop it properly.
+
 ### Directory structure ###
 # Output file
-ROOT_DIR=..
+ROOT_DIR=../..
 TARGET_NAME=Example
 TARGET_DIR=$(ROOT_DIR)/build
 
@@ -26,7 +29,7 @@ CPPUTEST_LIB_DIR=/usr/local/lib
 endif
 
 # List all user unit tests
-TEST_DIR=.
+TEST_DIR=..
 TEST_SRC_DIRS=$(TEST_DIR)/src $(TEST_DIR)/mock
 TEST_INC_DIR=$(TEST_DIR)/inc
 TEST_LIB_DIRS=$(TEST_DIR)/lib
@@ -45,4 +48,4 @@ CPP_LINKER=g++
 
 
 # Do the real work
-include MakefileWorker.make
+include ../MakefileWorker.make
