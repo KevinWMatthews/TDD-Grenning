@@ -1,34 +1,52 @@
-all:
-	make -C src --file MakefileCppUTest.make
+#This makefile is currently rigged up to run the test executable ONLY.
+#It will compile all of the source code in the process of doing this.
 
-test:
-	make -C src --file MakefileCppUTest.make test
+TESTS_TO_RUN=Default LowLevel MidLevel
 
-run:
-	make -C src --file MakefileCppUTest.make run
+.PHONY: $(TESTS_TO_RUN)
+
+all: $(TESTS_TO_RUN)
+
+test: $(TESTS_TO_RUN)
 
 clean:
-	make -C src --file MakefileCppUTest.make clean
+#TODO how to avoid repetition?
+	make --file MakefileCppUTest.make clean
+	make -C LowLevel --file MakefileCppUTest.make clean
+	make -C MidLevel --file MakefileCppUTest.make clean
 
-rebuild:
-	make -C src --file MakefileCppUTest.make rebuild
+rebuild: clean all
 
-rebuildt:
-	make -C src --file MakefileCppUTest.make rebuildt
+rebuildt: clean test
+
+# Compile and run production code
+# run:
+# 	make -C src --file MakefileCppUTest.make run
 
 
 #Makefile debug options
+#TODO make sure to point this to the folder that you want...
 filelist:
-	make -C src --file MakefileCppUTest.make filelist
+	make -C MidLevel --file MakefileCppUTest.make filelist
 
 dirlist:
-	make -C src --file MakefileCppUTest.make dirlist
+	make -C MidLevel --file MakefileCppUTest.make dirlist
 
-flags:
-	make -C src --file MakefileCppUTest.make flags
+# flags:
+# 	make -C src --file MakefileCppUTest.make flags
 
-colortest:
-	make -C src --file MakefileCppUTest.make colortest
+# colortest:
+# 	make -C src --file MakefileCppUTest.make colortest
 
-help:
-	make -C src --file MakefileCppUTest.make help
+# help:
+# 	make -C src --file MakefileCppUTest.make help
+
+
+Default:
+	make --file MakefileCppUTest.make test
+
+LowLevel:
+	make -C LowLevel --file MakefileCppUTest.make test
+
+MidLevel:
+	make -C MidLevel --file MakefileCppUTest.make test

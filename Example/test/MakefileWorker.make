@@ -59,7 +59,7 @@ LIBS=$(addprefix lib,$(addsuffix .a,$(LIB_LIST)))
 
 # Test code using CppUTest test harness
 # User unit tests
-TEST_TARGET=$(TEST_TARGET_DIR)/$(TARGET_NAME)_test
+TEST_TARGET=$(TEST_TARGET_DIR)/$(TEST_TARGET_NAME)_test
 #Production code is compiled into a library
 TARGET_LIB=$(TEST_TARGET_DIR)/$(addsuffix .a,$(addprefix lib,$(TARGET_NAME)))
 
@@ -141,10 +141,10 @@ clean:
 
 ### Test code rules ###
 test: $(TEST_TARGET)
-	$(ECHO) "\n${Yellow}Executing $(notdir $<)...${NoColor}"
+	$(ECHO) "\n${BoldRed}Executing $(notdir $<)...${BoldBlue}"
 	$(ECHO)
 	$(SILENCE)$(TEST_TARGET)
-	$(ECHO) "\n${Green}...Tests executed!${NoColor}\n"
+	$(ECHO) "\n${BoldGreen}...Tests executed!${NoColor}\n"
 
 rebuildt: clean test
 

@@ -1,0 +1,6 @@
+Should the production code library be compiled several times? No.
+Probably want to put it under test/build and have each subfolder's makefile to look for it here.
+The test executables can reside in their own folder. Why not?
+
+Want to be able to rig this up with templates.
+Rethink ROOT_DIR and TEST_DIR.
