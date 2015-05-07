@@ -3,17 +3,12 @@ ifndef SILENCE
 	SILENCE =
 endif
 
-#Can currently only nest three subdirectories (see clean_path in MakefileWorker.make)
-#until I figure out how to loop it properly.
-
-### Directory structure ###
-ROOT_DIR=../..
-TEST_DIR=.
 TARGET_NAME=Example
 TEST_TARGET_NAME=LowLevel
 
-
+### Directory structure ###
 # List all production code folders
+ROOT_DIR=../..
 SRC_DIRS=$(ROOT_DIR)/src
 INC_DIRS=$(ROOT_DIR)/inc
 LIB_DIRS=
@@ -23,12 +18,16 @@ OBJ_DIR=$(ROOT_DIR)/obj
 TARGET_DIR=$(ROOT_DIR)/build
 
 # List all user unit test folders
+#TEST_DIR is assumed to be a subdirectory of the root test directory
+TEST_ROOT_DIR=$(ROOT_DIR)/test
+TEST_DIR=.
 TEST_SRC_DIRS=$(TEST_DIR)/src
 TEST_INC_DIR=$(TEST_DIR)/inc
 TEST_LIB_DIRS=$(TEST_DIR)/lib
 #Static library names without lib prefix and .a suffix
 TEST_LIB_LIST=
 TEST_TARGET_DIR=$(TEST_DIR)/build
+PRODUCTION_LIB_DIR=$(TEST_ROOT_DIR)/build
 TEST_OBJ_DIR=$(TEST_DIR)/obj
 
 

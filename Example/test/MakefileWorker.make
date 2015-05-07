@@ -61,7 +61,7 @@ LIBS=$(addprefix lib,$(addsuffix .a,$(LIB_LIST)))
 # User unit tests
 TEST_TARGET=$(TEST_TARGET_DIR)/$(TEST_TARGET_NAME)_test
 #Production code is compiled into a library
-TARGET_LIB=$(TEST_TARGET_DIR)/$(addsuffix .a,$(addprefix lib,$(TARGET_NAME)))
+PRODUCTION_LIB=$(PRODUCTION_LIB_DIR)/$(addsuffix .a,$(addprefix lib,$(TARGET_NAME)))
 
 TEST_SRC=$(call get_src_from_dir_list,$(TEST_SRC_DIRS))
 CLEAN_TEST_SRC=$(call clean_path,$(TEST_SRC))
@@ -150,14 +150,14 @@ rebuildt: clean test
 
 # Be SURE to link the test objects before the source code library!!
 # This is what enables link-time substitution
-$(TEST_TARGET): $(TEST_OBJ) $(TARGET_LIB)
+$(TEST_TARGET): $(TEST_OBJ) $(PRODUCTION_LIB)
 	$(ECHO) "\n${Yellow}Linking $(notdir $@)...${NoColor}"
 	$(ECHO) "${DarkGray}test${NoColor}"
 	$(SILENCE)mkdir -p $(dir $@)
 	$(SILENCE)$(CPP_LINKER) -o $@ $^ $(LINKER_FLAGS) $(TEST_LINKER_FLAGS) $(CPPUTEST_LINKER_FLAGS)
 
 #Target source code library is placed in the test folder because the production build doesn't use it
-$(TARGET_LIB): $(SRC_OBJ)
+$(PRODUCTION_LIB): $(SRC_OBJ)
 	$(ECHO) "\n${Yellow}Archiving all production code into $(notdir $@)... ${NoColor}"
 	$(SILENCE)mkdir -p $(dir $@)
 	$(SILENCE)$(ARCHIVER) $(ARCHIVER_FLAGS) $@ $^
@@ -182,7 +182,7 @@ endif
 
 ### Targets for debugging this makefile ###
 dirlist:
-	$(ECHO) "\n${BoldCyan}Build results:"
+	$(ECHO) "\n${BoldCyan}Production code build results:"
 	$(call techo,TARGET_DIR,$(TARGET_DIR))
 	$(call techo,OBJ_DIR,$(OBJ_DIR))
 
@@ -195,6 +195,11 @@ dirlist:
 	$(call techo,TEST_SRC_DIRS,$(TEST_SRC_DIRS))
 	$(call techo,TEST_INC_DIR,$(TEST_INC_DIR))
 	$(call techo,TEST_LIB_DIRS,$(TEST_LIB_DIRS))
+
+	$(ECHO) "\n${BoldCyan}Test code build results:"
+	$(call techo,TEST_OBJ_DIR,$(TEST_OBJ_DIR))
+	$(call techo,TEST_TARGET_DIR,$(TEST_TARGET_DIR))
+	$(call techo,PRODUCTION_LIB_DIR,$(PRODUCTION_LIB_DIR))
 
 	$(ECHO) "\n${BoldCyan}CppUTest code:${NoColor}"
 	$(ECHO) "${BoldRed}Learn how to detect if CppUTest is installed!"
@@ -216,7 +221,7 @@ filelist:
 	$(call techo,LIBS,$(LIBS))
 
 	$(ECHO) "\n${BoldCyan}Test code:${NoColor}"
-	$(call techo,TARGET_LIB,$(TARGET_LIB))
+	$(call techo,PRODUCTION_LIB,$(PRODUCTION_LIB))
 	$(call techo,TEST_TARGET,$(TEST_TARGET))
 	$(call techo,TEST_SRC,$(TEST_SRC))
 	$(call techo,TEST_OBJ,$(TEST_OBJ))
