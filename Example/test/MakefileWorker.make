@@ -102,11 +102,11 @@ techo=$(ECHO) "${BoldPurple}  $1:${NoColor}"; echo $2; echo;
 .PHONY: dirlist filelist flags colortest help
 
 
-### Production code rules ###
-all: run
+all: test
 
 rebuild: clean all
 
+### Production code rules ###
 run: $(TARGET)
 	echo $(TARGET)
 	$(ECHO) "\n${BoldYellow}Executing $(notdir $<)...${NoColor}"

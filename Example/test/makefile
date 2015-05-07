@@ -1,52 +1,65 @@
-#This makefile is currently rigged up to run the test executable ONLY.
+#This makefile is currently rigged up to run the test executable ONLY,
+#that is, make all will run the tests (just like make test).
 #It will compile all of the source code in the process of doing this.
 
+### User config ###
+#To run tests, add them to this list
 TESTS_TO_RUN=Default LowLevel MidLevel
 
+#Add the directory of the test's makefile (MakefileCppUTest.make) here
+DEFAULT_DIR=.
+LOWLEVEL_DIR=LowLevel
+MIDLEVEL_DIR=MidLevel
+
+#Create a makefile target for each series of tests
+Default:
+	$(MAKE_TESTS) $(DEFAULT_DIR) $(MAKECMDGOALS)
+
+LowLevel:
+	$(MAKE_TESTS) $(LOWLEVEL_DIR) $(MAKECMDGOALS)
+
+MidLevel:
+	$(MAKE_TESTS) $(MIDLEVEL_DIR) $(MAKECMDGOALS)
+
+
+### Makefile targets ###
+.DEFAULT_GOAL:=all
+
 .PHONY: $(TESTS_TO_RUN)
+.PHONY: all test clean rebuild rebuildt
+.PHONY: filelist dirlist flags colortest help
 
 all: $(TESTS_TO_RUN)
 
 test: $(TESTS_TO_RUN)
 
-clean:
-#TODO how to avoid repetition?
-	make --file MakefileCppUTest.make clean
-	make -C LowLevel --file MakefileCppUTest.make clean
-	make -C MidLevel --file MakefileCppUTest.make clean
+clean: $(TESTS_TO_RUN)
 
 rebuild: clean all
 
 rebuildt: clean test
 
 # Compile and run production code
-# run:
-# 	make -C src --file MakefileCppUTest.make run
-
+# run: $(TESTS_TO_RUN)
 
 #Makefile debug options
-#TODO make sure to point this to the folder that you want...
-filelist:
-	make -C MidLevel --file MakefileCppUTest.make filelist
+filelist: $(TESTS_TO_RUN)
 
-dirlist:
-	make -C MidLevel --file MakefileCppUTest.make dirlist
+dirlist: $(TESTS_TO_RUN)
 
-# flags:
-# 	make -C src --file MakefileCppUTest.make flags
+flags: $(TESTS_TO_RUN)
 
-# colortest:
-# 	make -C src --file MakefileCppUTest.make colortest
+colortest: Default
 
-# help:
-# 	make -C src --file MakefileCppUTest.make help
+help: Default
 
 
-Default:
-	make --file MakefileCppUTest.make test
+### Helpers ###
+#NOTE: You must specify a directory immediately after MAKE_TESTS!
+# -C  Change Directory
+MAKE_TESTS=make --file MakefileCppUTest.make -C
 
-LowLevel:
-	make -C LowLevel --file MakefileCppUTest.make test
 
-MidLevel:
-	make -C MidLevel --file MakefileCppUTest.make test
+### Documentation ###
+# MAKECMDGOALS is a special variable that is set by make
+# .DEFAULT_GOAL is a special variable that the user can set
