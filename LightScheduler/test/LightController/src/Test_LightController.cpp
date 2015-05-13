@@ -1,6 +1,7 @@
 extern "C"
 {
   #include "LightController.h"
+  #include "LightDriver.h"
   #include "LightDriverSpy.h"
 }
 

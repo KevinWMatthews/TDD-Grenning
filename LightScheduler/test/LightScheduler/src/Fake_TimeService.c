@@ -1,5 +1,5 @@
 #include "TimeService.h"
-#include "FakeTimeService.h"
+#include "Fake_TimeService.h"
 #include "DataTypes.h"
 
 static Time theTime;
@@ -53,22 +53,22 @@ void TimeService_CancelPeriodicAlarmInSeconds(int alarmPeriod, WakeupCallback ca
 }
 
 // Create fake time service functions to set and get from the dead drop
-void FakeTimeService_SetMinute(int minute)
+void Fake_TimeService_SetMinute(int minute)
 {
   theTime.minuteOfDay = minute;
 }
 
-void FakeTimeService_SetDay(int dayOfWeek)
+void Fake_TimeService_SetDay(int dayOfWeek)
 {
   theTime.dayOfWeek = dayOfWeek;
 }
 
-WakeupCallback FakeTimeService_GetAlarmCallback(void)
+WakeupCallback Fake_TimeService_GetAlarmCallback(void)
 {
   return callback;
 }
 
-int FakeTimeService_GetAlarmPeriod(void)
+int Fake_TimeService_GetAlarmPeriod(void)
 {
   return period;
 }

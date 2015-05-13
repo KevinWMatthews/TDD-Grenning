@@ -51,27 +51,22 @@ endif
 ### Auto-detect source code and generate object files ###
 # Production source code
 SRC=$(call get_src_from_dir_list,$(SRC_DIRS))
-#nest calls so we don't get a repetition of .c and .cpp files
-src_to=$(patsubst %.c,%$1,$(patsubst %.cpp,%$1,$(SRC)))
-src_to_o=$(call src_to,.o,$1)
-SRC_OBJ=$(addprefix $(OBJ_DIR)/,$(src_to_o))
-src_to_d=$(call src_to,.d,$1)
-SRC_DEP=$(addprefix $(OBJ_DIR)/,$(src_to_d))
+CLEAN_SRC=$(call clean_path,$(SRC))
+SRC_OBJ=$(addprefix $(OBJ_DIR)/,$(call src_to_o,$(CLEAN_SRC)))
+SRC_DEP=$(addprefix $(OBJ_DIR)/,$(call src_to_d,$(CLEAN_SRC)))
 INC=$(call get_inc_from_dir_list,$(INC_DIRS))
 LIBS=$(addprefix lib,$(addsuffix .a,$(LIB_LIST)))
 
 # Test code using CppUTest test harness
 # User unit tests
-TEST_TARGET=$(TEST_TARGET_DIR)/$(TARGET_NAME)_test
+TEST_TARGET=$(TEST_TARGET_DIR)/$(TEST_TARGET_NAME)_test
 #Production code is compiled into a library
-TARGET_LIB=$(TEST_TARGET_DIR)/$(addsuffix .a,$(addprefix lib,$(TARGET_NAME)))
+PRODUCTION_LIB=$(PRODUCTION_LIB_DIR)/$(addsuffix .a,$(addprefix lib,$(TARGET_NAME)))
 
 TEST_SRC=$(call get_src_from_dir_list,$(TEST_SRC_DIRS))
-test_src_to=$(patsubst %.c,%$1,$(patsubst %.cpp,%$1,$(TEST_SRC)))
-test_src_to_o=$(call test_src_to,.o,$1)
-TEST_OBJ=$(addprefix $(TEST_OBJ_DIR)/,$(test_src_to_o))
-test_src_to_d=$(call test_src_to,.d,$1)
-TEST_DEP=$(addprefix $(TEST_OBJ_DIR)/,$(test_src_to_d))
+CLEAN_TEST_SRC=$(call clean_path,$(TEST_SRC))
+TEST_OBJ=$(addprefix $(TEST_OBJ_DIR)/,$(call src_to_o,$(CLEAN_TEST_SRC)))
+TEST_DEP=$(addprefix $(TEST_OBJ_DIR)/,$(call src_to_d,$(CLEAN_TEST_SRC)))
 TEST_INC=$(call get_inc_from_dir,$(TEST_INC_DIR))
 TEST_LIBS=$(addprefix lib,$(addsuffix .a,$(TEST_LIB_LIST)))
 
@@ -86,6 +81,17 @@ get_src_from_dir = $(wildcard $1/*.c) $(wildcard $1/*.cpp)
 get_src_from_dir_list = $(foreach dir, $1, $(call get_src_from_dir,$(dir)))
 get_inc_from_dir = $(wildcard $1/*.h)
 get_inc_from_dir_list = $(foreach dir, $1, $(call get_inc_from_dir,$(dir)))
+remove_dotdot=$(patsubst ../%,%,$1)
+remove_dot=$(patsubst ./%,%,$1)
+#Hahaha, need to loop this ;)
+clean_path=$(call remove_dot,$(call remove_dotdot,$(call remove_dotdot,$(call remove_dotdot,$1))))
+#nest calls so we don't get a repetition of .c and .cpp files
+src_to=$(patsubst %.c,%$1,$(patsubst %.cpp,%$1,$2))
+src_to_o=$(call src_to,.o,$1)
+src_to_d=$(call src_to,.d,$1)
+
+
+
 #"test" echo; used for checking makefile parameters
 ECHO=@echo -e
 techo=$(ECHO) "${BoldPurple}  $1:${NoColor}"; echo $2; echo;
@@ -93,20 +99,16 @@ techo=$(ECHO) "${BoldPurple}  $1:${NoColor}"; echo $2; echo;
 ### Makefile targets ###
 .PHONY: all rebuild run compile clean cleanp
 .PHONY: test rebuildt cleant
-.PHONY: dirlist filelist flags colortest help
+.PHONY: dirlist filelist flags vars colortest help
 
+
+all: test
+
+rebuild: clean all
 
 ### Production code rules ###
-all: $(TARGET)
-	make run
-
-rebuild:
-	$(ECHO) "${Blue}"
-	make clean
-	$(ECHO) "${Blue}"
-	make all
-
 run: $(TARGET)
+	echo $(TARGET)
 	$(ECHO) "\n${BoldYellow}Executing $(notdir $<)...${NoColor}"
 	$(ECHO) "${DarkGray}Production${NoColor}"
 	$(ECHO)
@@ -122,7 +124,7 @@ $(TARGET): $(SRC_OBJ) $(MCU_OBJ)
 	$(SILENCE)$(C_LINKER) $^ -o $@ $(LINKER_FLAGS)
 	$(ECHO) "${Green}...Executable created!\n${NoColor}"
 
-$(OBJ_DIR)/%.o: %.c
+$(OBJ_DIR)/%.o: $(ROOT_DIR)/%.c
 	$(ECHO) "\n${Yellow}Compiling $(notdir $<)...${NoColor}"
 	$(ECHO) "${DarkGray}Production${NoColor}"
 	$(SILENCE)mkdir -p $(dir $@)
@@ -139,38 +141,33 @@ clean:
 
 ### Test code rules ###
 test: $(TEST_TARGET)
-	$(ECHO) "\n${Yellow}Executing $(notdir $<)...${NoColor}"
+	$(ECHO) "\n${BoldRed}Executing $(notdir $<)...${BoldBlue}"
 	$(ECHO)
 	$(SILENCE)$(TEST_TARGET)
-	$(ECHO) "\n${Green}...Tests executed!${NoColor}\n"
+	$(ECHO) "\n${BoldGreen}...Tests executed!${NoColor}\n"
 
-rebuildt:
-	$(ECHO) "${Blue}"
-	make clean
-	$(ECHO) "${Blue}"
-	make test
+rebuildt: clean test
 
 # Be SURE to link the test objects before the source code library!!
 # This is what enables link-time substitution
-$(TEST_TARGET): $(TEST_OBJ) $(TARGET_LIB)
+$(TEST_TARGET): $(TEST_OBJ) $(PRODUCTION_LIB)
 	$(ECHO) "\n${Yellow}Linking $(notdir $@)...${NoColor}"
 	$(ECHO) "${DarkGray}test${NoColor}"
 	$(SILENCE)mkdir -p $(dir $@)
 	$(SILENCE)$(CPP_LINKER) -o $@ $^ $(LINKER_FLAGS) $(TEST_LINKER_FLAGS) $(CPPUTEST_LINKER_FLAGS)
 
 #Target source code library is placed in the test folder because the production build doesn't use it
-$(TARGET_LIB): $(SRC_OBJ)
+$(PRODUCTION_LIB): $(SRC_OBJ)
 	$(ECHO) "\n${Yellow}Archiving all production code into $(notdir $@)... ${NoColor}"
 	$(SILENCE)mkdir -p $(dir $@)
 	$(SILENCE)$(ARCHIVER) $(ARCHIVER_FLAGS) $@ $^
 
-$(TEST_OBJ_DIR)/%.o: %.c
+$(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.c
 	$(ECHO) "\n${Yellow}Compiling $(notdir $<)...${NoColor}"
 	$(SILENCE)mkdir -p $(dir $@)
-	$(ECHO) "${DarkGray}test${NoColor}"
 	$(SILENCE)$(C_COMPILER) $(COMPILER_FLAGS) $< -o $@ $(INCLUDE_FLAGS) $(TEST_INCLUDE_FLAGS)
 
-$(TEST_OBJ_DIR)/%.o: %.cpp
+$(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp
 	$(ECHO) "\n${Yellow}Compiling $(notdir $<)...${NoColor}"
 	$(SILENCE)mkdir -p $(dir $@)
 	$(ECHO) "${DarkGray}test${NoColor}"
@@ -184,7 +181,7 @@ endif
 
 ### Targets for debugging this makefile ###
 dirlist:
-	$(ECHO) "\n${BoldCyan}Build results:"
+	$(ECHO) "\n${BoldCyan}Production code build results:"
 	$(call techo,TARGET_DIR,$(TARGET_DIR))
 	$(call techo,OBJ_DIR,$(OBJ_DIR))
 
@@ -198,10 +195,18 @@ dirlist:
 	$(call techo,TEST_INC_DIR,$(TEST_INC_DIR))
 	$(call techo,TEST_LIB_DIRS,$(TEST_LIB_DIRS))
 
+	$(ECHO) "\n${BoldCyan}Test code build results:"
+	$(call techo,TEST_OBJ_DIR,$(TEST_OBJ_DIR))
+	$(call techo,TEST_TARGET_DIR,$(TEST_TARGET_DIR))
+	$(call techo,PRODUCTION_LIB_DIR,$(PRODUCTION_LIB_DIR))
+
 	$(ECHO) "\n${BoldCyan}CppUTest code:${NoColor}"
 	$(ECHO) "${BoldRed}Learn how to detect if CppUTest is installed!"
 
 filelist:
+	$(ECHO) "\n${BoldCyan}Directory of MakefileWorker.make:${NoColor}"
+	$(ECHO) "$(shell pwd)\n"
+
 	$(call techo,TARGET,$(TARGET))
 
 	$(ECHO) "\n${BoldCyan}All Dependencies:${NoColor}"
@@ -215,7 +220,7 @@ filelist:
 	$(call techo,LIBS,$(LIBS))
 
 	$(ECHO) "\n${BoldCyan}Test code:${NoColor}"
-	$(call techo,TARGET_LIB,$(TARGET_LIB))
+	$(call techo,PRODUCTION_LIB,$(PRODUCTION_LIB))
 	$(call techo,TEST_TARGET,$(TEST_TARGET))
 	$(call techo,TEST_SRC,$(TEST_SRC))
 	$(call techo,TEST_OBJ,$(TEST_OBJ))
@@ -227,6 +232,13 @@ filelist:
 	$(call techo,CPPUTEST_LIBS,$(CPPUTEST_LIBS))
 
 flags:
+	$(ECHO) "\n${BoldCyan}Compiler and Linker${NoColor}"
+	$(call techo,C_COMPILER,$(C_COMPILER))
+	$(call techo,CPP_COMPILER,$(CPP_COMPILER))
+	$(call techo,ARCHIVER,$(ARCHIVER))
+	$(call techo,C_LINKER,$(C_LINKER))
+	$(call techo,CPP_LINKER,$(CPP_LINKER))
+
 	$(ECHO) "\n${BoldCyan}Production code${NoColor}"
 	$(call techo,COMPILER_FLAGS,$(COMPILER_FLAGS))
 	$(call techo,INCLUDE_FLAGS,$(INCLUDE_FLAGS))
@@ -241,17 +253,21 @@ flags:
 	$(ECHO) "\n${BoldCyan}CppUTest code${NoColor}"
 	$(call techo,CPPUTEST_LINKER_FLAGS,$(CPPUTEST_LINKER_FLAGS))
 
+vars:
+	$(ECHO) "\n${BoldCyan}Makefile variables${NoColor}"
+	$(call techo,TEST_DIR,$(TEST_DIR))
+
 help:
 	$(ECHO) "${BoldCyan}Production code options:${NoColor}"
 	$(ECHO) "all:\t\tCompile all updated production code"
 	$(ECHO) "rebuild:\tClean and rebuild all production code"
 	$(ECHO) "run:\t\tRun all production code, compiling if necessary"
 	$(ECHO) "clean:\t\tClean all production (and test) code"
-	$(ECHO) "cleanp:\t\tClean production code only"
 	$(ECHO)
 	$(ECHO) "${BoldCyan}Test code options:${NoColor}"
 	$(ECHO) "test:\t\tCompile all updated test code and run all tests"
 	$(ECHO) "rebuildt:\tClean and recompile all test code, run all tests"
+	$(ECHO) "clean:\t\tClean all test and production code"
 	$(ECHO)
 	$(ECHO) "${BoldCyan}Makefile debugging options:${NoColor}"
 	$(ECHO) "dirlist:\tList all directories detected and used by the project"

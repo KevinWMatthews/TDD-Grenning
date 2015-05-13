@@ -1,13 +1,13 @@
 extern "C"
 {
   #include "TimeService.h"
-  #include "FakeTimeService.h"
+  #include "Fake_TimeService.h"
 }
 
 #include "CppUTest/TestHarness.h"
-#include "Test_FakeTimeService.h"
+#include "Test_Fake_TimeService.h"
 
-TEST_GROUP(FakeTimeService)
+TEST_GROUP(Fake_TimeService)
 {
   void setup()
   {
@@ -22,11 +22,11 @@ TEST_GROUP(FakeTimeService)
 
 static void checkPeriodicAlarm(int period, WakeupCallback callback)
 {
-  LONGS_EQUAL(period, FakeTimeService_GetAlarmPeriod());
-  LONGS_EQUAL(callback, FakeTimeService_GetAlarmCallback());
+  LONGS_EQUAL(period, Fake_TimeService_GetAlarmPeriod());
+  LONGS_EQUAL(callback, Fake_TimeService_GetAlarmCallback());
 }
 
-TEST(FakeTimeService, Create)
+TEST(Fake_TimeService, Create)
 {
   Time time;
   TimeService_GetTime(&time);
@@ -35,14 +35,14 @@ TEST(FakeTimeService, Create)
   LONGS_EQUAL(TIME_UNKNOWN, time.dayOfWeek);
 }
 
-TEST(FakeTimeService, Destroy)
+TEST(Fake_TimeService, Destroy)
 {
   Time time;
   TimeService_GetTime(&time);
   WakeupCallback callback;
 
-  FakeTimeService_SetMinute(42);
-  FakeTimeService_SetDay(MONDAY);
+  Fake_TimeService_SetMinute(42);
+  Fake_TimeService_SetDay(MONDAY);
   TimeService_SetPeriodicAlarmInSeconds(43, callback);
   TimeService_Destroy();
 
@@ -51,18 +51,18 @@ TEST(FakeTimeService, Destroy)
   checkPeriodicAlarm(-1, NULL);
 }
 
-TEST(FakeTimeService, SetTime)
+TEST(Fake_TimeService, SetTime)
 {
   Time time;
-  FakeTimeService_SetMinute(42);
-  FakeTimeService_SetDay(SATURDAY);
+  Fake_TimeService_SetMinute(42);
+  Fake_TimeService_SetDay(SATURDAY);
 
   TimeService_GetTime(&time);
   LONGS_EQUAL(42, time.minuteOfDay);
   LONGS_EQUAL(SATURDAY, time.dayOfWeek);
 }
 
-TEST(FakeTimeService, SetPeriodicAlarm)
+TEST(Fake_TimeService, SetPeriodicAlarm)
 {
   WakeupCallback callback;
 
@@ -70,7 +70,7 @@ TEST(FakeTimeService, SetPeriodicAlarm)
   checkPeriodicAlarm(42, callback);
 }
 
-TEST(FakeTimeService, CanelClearsCallback)
+TEST(Fake_TimeService, CanelClearsCallback)
 {
   WakeupCallback callback;
 
@@ -79,7 +79,7 @@ TEST(FakeTimeService, CanelClearsCallback)
   checkPeriodicAlarm(-1, NULL);
 }
 
-TEST(FakeTimeService, CanelWontClearWrongCallbackFunction)
+TEST(Fake_TimeService, CanelWontClearWrongCallbackFunction)
 {
   WakeupCallback callback, otherCallback;
 
@@ -88,7 +88,7 @@ TEST(FakeTimeService, CanelWontClearWrongCallbackFunction)
   checkPeriodicAlarm(42, callback);
 }
 
-TEST(FakeTimeService, CanelWontClearWrongCallbackPeriod)
+TEST(Fake_TimeService, CanelWontClearWrongCallbackPeriod)
 {
   WakeupCallback callback;
   int period = 42, otherPeriod = 43;
