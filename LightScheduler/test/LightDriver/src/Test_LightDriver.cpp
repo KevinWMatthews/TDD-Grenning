@@ -35,8 +35,9 @@ LightDriverInterfaceStruct interface =
 
 LightDriverStruct testDriver =
 {
-  "testDriver",
-  13
+  .vtable = NULL,
+  .type = "testDriver",
+  .id = 13
 };
 TEST(LightDriver, NullDriverDoesNotCrash)
 {

@@ -30,6 +30,7 @@ static LightDriverInterfaceStruct interface =
 LightDriver LightDriverSpy_Create(int id)
 {
   LightDriverSpy self = (LightDriverSpy)calloc(1, sizeof(LightDriverSpyStruct));
+  self->base.vtable = &interface;
   self->base.type = "Spy";
   self->base.id = id;
   return (LightDriver)self;

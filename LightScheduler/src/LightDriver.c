@@ -15,24 +15,24 @@ static BOOL isValid(LightDriver self)
   return interface && self;   //Clever! Returns false if either is NULL
 }
 
+//Consider testing for null pointers as follows:
+// if (self && self->vtable && self->vtable->TurnOn)
 void LightDriver_TurnOn(LightDriver self)
 {
-  // Should we protect against a null pointer in interface here?
-  if (isValid(self) && interface->TurnOn)
-    interface->TurnOn(self);
+  if (isValid(self))
+    self->vtable->TurnOn(self);
 }
 
 void LightDriver_TurnOff(LightDriver self)
 {
-  // Should we protect against a null pointer in interface here?
-  if (isValid(self) && interface->TurnOff)
-    interface->TurnOff(self);
+  if (isValid(self))
+    self->vtable->TurnOff(self);
 }
 
 void LightDriver_Destroy(LightDriver self)
 {
   if (isValid(self))
-    interface->Destroy(self);
+    self->vtable->Destroy(self);
 }
 
 const char* LightDriver_GetType(LightDriver driver)

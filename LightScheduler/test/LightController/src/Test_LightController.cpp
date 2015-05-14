@@ -3,6 +3,7 @@ extern "C"
   #include "LightController.h"
   #include "LightDriver.h"
   #include "LightDriverSpy.h"
+  #include "CountingLightDriver.h"
 }
 
 #include "CppUTest/TestHarness.h"
@@ -110,4 +111,16 @@ TEST(LightController, RemoveNonExistingLightDriverFails)
 {
   CHECK_TRUE(LightController_Remove(10));
   CHECK_FALSE(LightController_Remove(10));
+}
+
+TEST(LightController, TurnOnDifferentDriverTypes)
+{
+  // Drivers have been initialized to use LightDriverSpy
+  LightDriver otherDriver = CountingLightDriver_Create(5);
+  LightController_Add(5, otherDriver);
+  LightController_On(7);
+  LightController_On(5);
+  LightController_Off(5);
+  LONGS_EQUAL(LIGHT_ON, LightDriverSpy_GetState(7));
+  LONGS_EQUAL(2, CountingLightDriver_GetCallCount(otherDriver));
 }
