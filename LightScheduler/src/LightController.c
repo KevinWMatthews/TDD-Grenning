@@ -14,7 +14,7 @@ static LightDriver lightDrivers[MAX_LIGHTS] = { NULL };
 
 void LightController_Create(void)
 {
-  memset(lightDrivers, 0, sizeof lightDrivers);
+  memset(lightDrivers, 0, sizeof(lightDrivers));
 }
 
 static void destroy(LightDriver driver)
@@ -55,7 +55,7 @@ void LightController_Destroy(void)
 
 static BOOL isIdOutOfBounds(int id)
 {
-    return id < 0 || id >= MAX_LIGHTS;
+  return id < 0 || id >= MAX_LIGHTS;
 }
 
 

@@ -16,9 +16,10 @@ static int lastState;
 
 LightDriver LightDriverSpy_Create(int id)
 {
-  LightDriverSpy self = (LightDriverSpy)calloc(1, sizeof(LightDriverSpyStruct));  // Huh, I wonder why I need typecasting
+  LightDriverSpy self = (LightDriverSpy)calloc(1, sizeof(LightDriverSpyStruct));
   self->base.type = TestLightDriver;
   self->base.id = id;
+  // states[id] = LIGHT_STATE_UNKNOWN;
   return (LightDriver)self;
 }
 

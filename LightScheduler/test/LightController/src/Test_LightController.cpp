@@ -21,18 +21,6 @@ TEST_GROUP(LightController)
     LightController_Destroy();
   }
 };
-
-// This test should leak if the previous LightDriverSpy isn't destroyed,
-// but I don't know how to detect leaks yet.
-TEST(LightController, AllDriversDestroyed)
-{
-  for (int i = 0; i < MAX_LIGHTS; i++)
-  {
-    LightDriver spy = LightDriverSpy_Create(i);
-    LONGS_EQUAL(TRUE, LightController_Add(i, (LightDriver)spy));
-  }
-}
-
 TEST(LightController, TurnOn)
 {
   LightController_On(7);
@@ -55,6 +43,17 @@ TEST(LightController, AddingDriverDestroysPrevious)
   LightController_Destroy();
 }
 
+// This test should leak if the previous LightDriverSpy isn't destroyed,
+// but I don't know how to detect leaks yet.
+TEST(LightController, AllDriversDestroyed)
+{
+  for (int i = 0; i < MAX_LIGHTS; i++)
+  {
+    LightDriver spy = LightDriverSpy_Create(i);
+    LONGS_EQUAL(TRUE, LightController_Add(i, (LightDriver)spy));
+  }
+}
+
 TEST(LightController, ValidIdLowerRange)
 {
   LightDriver spy = LightDriverSpy_Create(0);
@@ -74,6 +73,21 @@ TEST(LightController, InValidIdBeyondUpperRange)
   free(spy);
 }
 
+// Nice test, but the spy is already populated with data...
+// TEST(LightController, NonAddedLightDoesNothing)
+// {
+//   LightController_Add(1, NULL);
+//   LightController_On(1);
+//   LONGS_EQUAL(LIGHT_STATE_UNKNOWN, LightDriverSpy_GetState(1));
+//   LightController_Off(1);
+//   LONGS_EQUAL(LIGHT_STATE_UNKNOWN, LightDriverSpy_GetState(1));
+// }
+
+TEST(LightController, RejectsNullDrivers)
+{
+  LONGS_EQUAL(FALSE, LightController_Add(1, NULL));
+}
+
 // TEST(LightController, RemoveExistingLightDriverSucceeds)
 // {
 //   CHECK(LightController_Remove(10));
@@ -87,11 +101,6 @@ TEST(LightController, InValidIdBeyondUpperRange)
 //     LightController_TurnOff(1);
 //     LONGS_EQUAL(LIGHT_STATE_UNKNOWN, LightDriverSpy_GetState(1));
 // }
-
-TEST(LightController, RejectsNullDrivers)
-{
-    LONGS_EQUAL(FALSE, LightController_Add(1, NULL));
-}
 
 // TEST(LightController, RemoveNonExistingLightDriverFails)
 // {

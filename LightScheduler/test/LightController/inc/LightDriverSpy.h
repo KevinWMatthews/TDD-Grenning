@@ -17,8 +17,8 @@ int LightDriverSpy_GetLastId(void);
 int LightDriverSpy_GetLastState(void);
 
 enum {
-    LIGHT_ID_UNKNOWN = -1, LIGHT_STATE_UNKNOWN = -1,
-    LIGHT_OFF = 0, LIGHT_ON = 1
+  LIGHT_ID_UNKNOWN = -1, LIGHT_STATE_UNKNOWN = -1,
+  LIGHT_OFF = 0, LIGHT_ON = 1
 };
 
 #endif  /* D_LightDriverSpy_H */
