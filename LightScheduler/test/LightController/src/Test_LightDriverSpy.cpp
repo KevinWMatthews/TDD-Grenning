@@ -4,20 +4,22 @@ extern "C"
 }
 
 #include "CppUTest/TestHarness.h"
+#include "Test_LightDriverSpy.h"
 
 TEST_GROUP(LightDriverSpy)
 {
-  LightDriver lightDriverSpy;
+  LightDriver lightDriver;
 
   void setup()
   {
     LightDriverSpy_Reset();
-    lightDriverSpy = LightDriverSpy_Create(1);
+    lightDriver = LightDriverSpy_Create(1);
+    LightDriverSpy_InstallInterface();
   }
 
   void teardown()
   {
-    LightDriverSpy_Destroy(lightDriverSpy);
+    LightDriver_Destroy(lightDriver);
   }
 };
 
@@ -28,26 +30,26 @@ TEST(LightDriverSpy, Create)
 
 TEST(LightDriverSpy, On)
 {
-  LightDriverSpy_TurnOn(lightDriverSpy);
+  LightDriver_TurnOn(lightDriver);
   LONGS_EQUAL(LIGHT_ON, LightDriverSpy_GetState(1));
 }
 
 TEST(LightDriverSpy, Off)
 {
-  LightDriverSpy_TurnOff(lightDriverSpy);
+  LightDriver_TurnOff(lightDriver);
   LONGS_EQUAL(LIGHT_OFF, LightDriverSpy_GetState(1));
 }
 
 TEST(LightDriverSpy, RecordsLastIdLastTurnOn)
 {
-  LightDriverSpy_TurnOff(lightDriverSpy);
+  LightDriver_TurnOff(lightDriver);
   LONGS_EQUAL(1, LightDriverSpy_GetLastId());
   LONGS_EQUAL(LIGHT_OFF, LightDriverSpy_GetLastState());
 }
 
 TEST(LightDriverSpy, RecordsLastIdLastTurnOff)
 {
-  LightDriverSpy_TurnOn(lightDriverSpy);
+  LightDriver_TurnOn(lightDriver);
   LONGS_EQUAL(1, LightDriverSpy_GetLastId());
   LONGS_EQUAL(LIGHT_ON, LightDriverSpy_GetLastState());
 }

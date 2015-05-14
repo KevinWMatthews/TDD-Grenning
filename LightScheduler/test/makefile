@@ -4,7 +4,7 @@
 
 ### User config ###
 #To run tests, add them to this list
-TESTS_TO_RUN=LightScheduler RandomMinute LightController
+TESTS_TO_RUN=LightScheduler Random Minute LightController LightDriver
 
 #Add the directory of the test's makefile (MakefileCppUTest.make) here
 DEFAULT_DIR=.
@@ -14,6 +14,8 @@ LIGHTSCHEDULER_DIR=LightScheduler
 RANDOMMINUTE_DIR=RandomMinute
 
 LIGHTCONTROLLER_DIR=LightController
+
+LIGHTDRIVER_DIR=LightDriver
 
 #Create a makefile target for each series of tests
 Default:
@@ -27,6 +29,9 @@ RandomMinute:
 
 LightController:
 	$(MAKE_TESTS) $(LIGHTCONTROLLER_DIR) $(MAKECMDGOALS)
+
+LightDriver:
+	$(MAKE_TESTS) $(LIGHTDRIVER_DIR) $(MAKECMDGOALS)
 
 ### Makefile targets ###
 .DEFAULT_GOAL:=all

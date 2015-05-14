@@ -17,38 +17,13 @@ void LightController_Create(void)
   memset(lightDrivers, 0, sizeof(lightDrivers));
 }
 
-static void destroy(LightDriver driver)
-{
-  if (!driver)
-    return;
-
-  switch (driver->type)
-  {
-  case X10:
-    X10LightDriver_Destroy(driver);
-    break;
-  case AcmeWireless:
-    // AcmeWirelessLightDriver_Destroy(driver);
-    break;
-  case MemoryMapped:
-    // MemMappedLightDriver_Destroy(driver);
-    break;
-  case TestLightDriver:
-    LightDriverSpy_Destroy(driver);
-    break;
-  default:
-    /* now what? */
-    break;
-  }
-}
-
 void LightController_Destroy(void)
 {
   int i;
   for (i = 0; i < MAX_LIGHTS; i++)
   {
     LightDriver driver = lightDrivers[i];
-    destroy(driver);
+    LightDriver_Destroy(driver);
     lightDrivers[i] = NULL;
   }
 }
@@ -67,74 +42,32 @@ BOOL LightController_Add(int id, LightDriver lightDriver)
   if (lightDriver == NULL)
     return FALSE;
 
-  destroy(lightDrivers[id]);
+  LightDriver_Destroy(lightDrivers[id]);
 
   lightDrivers[id] = lightDriver;
   return TRUE;
 }
 
-// BOOL LightController_Remove(int id)
-// {
-//   if (isIdOutOfBounds(id))
-//       return FALSE;
+BOOL LightController_Remove(int id)
+{
+  if (isIdOutOfBounds(id))
+    return FALSE;
 
-//   if (lightDrivers[id] == NULL)
-//       return FALSE;
+  if (lightDrivers[id] == NULL)
+    return FALSE;
 
-//   LightDriver_Destroy(lightDrivers[id]);
+  LightDriver_Destroy(lightDrivers[id]);
 
-//   lightDrivers[id] = NULL;
-//   return TRUE;
-// }
+  lightDrivers[id] = NULL;
+  return TRUE;
+}
 
 void LightController_On(int id)
 {
-  LightDriver driver = lightDrivers[id];
-  if (NULL == driver)
-    return;
-
-  switch (driver->type)
-  {
-  case X10:
-    X10LightDriver_TurnOn(driver);
-    break;
-  case AcmeWireless:
-    // AcmeWirelessLightDriver_TurnOn(driver);
-    break;
-  case MemoryMapped:
-    // MemMappedLightDriver_TurnOn(driver);
-    break;
-  case TestLightDriver:
-    LightDriverSpy_TurnOn(driver);  //Test code?
-    break;
-  default:
-    /* now what? */
-    break;
-  }
+  LightDriver_TurnOn(lightDrivers[id]);
 }
 
 void LightController_Off(int id)
 {
-  LightDriver driver = lightDrivers[id];
-  if (NULL == driver)
-    return;
-
-  switch (driver->type)
-  {
-  case X10:
-    X10LightDriver_TurnOff(driver);
-    break;
-  case AcmeWireless:
-    // AcmeWirelessLightDriver_TurnOff(driver);
-    break;
-  case MemoryMapped:
-    // MemMappedLightDriver_TurnOff(driver);
-    break;
-  case TestLightDriver:
-    LightDriverSpy_TurnOff(driver);
-    break;
-  default:
-    /* now what? */
-    break;
-  }
+  LightDriver_TurnOff(lightDrivers[id]);
 }

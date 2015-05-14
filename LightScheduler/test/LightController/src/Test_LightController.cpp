@@ -14,6 +14,8 @@ TEST_GROUP(LightController)
   {
     LightController_Create();
     LightDriverSpy_AddSpiesToController();
+    LightDriverSpy_InstallInterface();
+    LightDriverSpy_Reset();
   }
 
   void teardown()
@@ -21,6 +23,17 @@ TEST_GROUP(LightController)
     LightController_Destroy();
   }
 };
+
+TEST(LightController, CreateDestroy)
+{
+}
+
+TEST(LightController, DriverIsDestroyedByLightController)
+{
+  LightDriver spy = LightDriverSpy_Create(1);
+  LightController_Add(1, spy);
+}
+
 TEST(LightController, TurnOn)
 {
   LightController_On(7);
@@ -70,40 +83,31 @@ TEST(LightController, InValidIdBeyondUpperRange)
 {
   LightDriver spy = LightDriverSpy_Create(MAX_LIGHTS);
   LONGS_EQUAL(FALSE, LightController_Add(MAX_LIGHTS, spy));
-  free(spy);
+  LightDriver_Destroy(spy);
 }
-
-// Nice test, but the spy is already populated with data...
-// TEST(LightController, NonAddedLightDoesNothing)
-// {
-//   LightController_Add(1, NULL);
-//   LightController_On(1);
-//   LONGS_EQUAL(LIGHT_STATE_UNKNOWN, LightDriverSpy_GetState(1));
-//   LightController_Off(1);
-//   LONGS_EQUAL(LIGHT_STATE_UNKNOWN, LightDriverSpy_GetState(1));
-// }
 
 TEST(LightController, RejectsNullDrivers)
 {
   LONGS_EQUAL(FALSE, LightController_Add(1, NULL));
 }
 
-// TEST(LightController, RemoveExistingLightDriverSucceeds)
-// {
-//   CHECK(LightController_Remove(10));
-// }
+TEST(LightController, RemoveExistingLightDriverSucceeds)
+{
+  // Is there some way to chec the spy to ensure that we got it right?
+  CHECK_TRUE(LightController_Remove(10));
+}
 
-// TEST(LightController, RemovedLightDoesNothing)
-// {
-//     LightController_Remove(1);
-//     LightController_TurnOn(1);
-//     LONGS_EQUAL(LIGHT_STATE_UNKNOWN, LightDriverSpy_GetState(1));
-//     LightController_TurnOff(1);
-//     LONGS_EQUAL(LIGHT_STATE_UNKNOWN, LightDriverSpy_GetState(1));
-// }
+TEST(LightController, RemovedLightDoesNothing)
+{
+  LightController_Remove(1);
+  LightController_On(1);
+  LONGS_EQUAL(LIGHT_STATE_UNKNOWN, LightDriverSpy_GetState(1));
+  LightController_Off(1);
+  LONGS_EQUAL(LIGHT_STATE_UNKNOWN, LightDriverSpy_GetState(1));
+}
 
-// TEST(LightController, RemoveNonExistingLightDriverFails)
-// {
-//     CHECK(LightController_Remove(10));
-//     CHECK(LightController_Remove(10) == FALSE);
-// }
+TEST(LightController, RemoveNonExistingLightDriverFails)
+{
+  CHECK_TRUE(LightController_Remove(10));
+  CHECK_FALSE(LightController_Remove(10));
+}
