@@ -17,4 +17,6 @@ typedef struct LightDriverStruct
   int id;
 } LightDriverStruct;
 
+void LightDriver_Destroy(LightDriver);
+
 #endif

@@ -9,6 +9,7 @@
 void LightController_Create(void);
 void LightController_Destroy(void);
 BOOL LightController_Add(int id, LightDriver);
+BOOL LightController_Remove(int id);
 void LightController_On(int id);
 void LightController_Off(int id);
 

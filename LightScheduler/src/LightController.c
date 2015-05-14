@@ -10,8 +10,7 @@
 
 int lightType = 0;
 
-static LightDriver lightDrivers[MAX_LIGHTS] =
-{ NULL };
+static LightDriver lightDrivers[MAX_LIGHTS] = { NULL };
 
 void LightController_Create(void)
 {
@@ -54,9 +53,18 @@ void LightController_Destroy(void)
   }
 }
 
+static BOOL isIdOutOfBounds(int id)
+{
+    return id < 0 || id >= MAX_LIGHTS;
+}
+
+
 BOOL LightController_Add(int id, LightDriver lightDriver)
 {
-  if (id < 0 || id >= MAX_LIGHTS)
+  if (isIdOutOfBounds(id))
+    return FALSE;
+
+  if (lightDriver == NULL)
     return FALSE;
 
   destroy(lightDrivers[id]);
@@ -65,7 +73,21 @@ BOOL LightController_Add(int id, LightDriver lightDriver)
   return TRUE;
 }
 
-void LightController_TurnOn(int id)
+// BOOL LightController_Remove(int id)
+// {
+//   if (isIdOutOfBounds(id))
+//       return FALSE;
+
+//   if (lightDrivers[id] == NULL)
+//       return FALSE;
+
+//   LightDriver_Destroy(lightDrivers[id]);
+
+//   lightDrivers[id] = NULL;
+//   return TRUE;
+// }
+
+void LightController_On(int id)
 {
   LightDriver driver = lightDrivers[id];
   if (NULL == driver)
@@ -91,7 +113,7 @@ void LightController_TurnOn(int id)
   }
 }
 
-void LightController_TurnOff(int id)
+void LightController_Off(int id)
 {
   LightDriver driver = lightDrivers[id];
   if (NULL == driver)

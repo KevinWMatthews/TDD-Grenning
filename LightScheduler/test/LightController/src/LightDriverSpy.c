@@ -14,6 +14,21 @@ static int states[MAX_LIGHTS];
 static int lastId;
 static int lastState;
 
+LightDriver LightDriverSpy_Create(int id)
+{
+  LightDriverSpy self = (LightDriverSpy)calloc(1, sizeof(LightDriverSpyStruct));  // Huh, I wonder why I need typecasting
+  self->base.type = TestLightDriver;
+  self->base.id = id;
+  return (LightDriver)self;
+}
+
+void LightDriverSpy_Destroy(LightDriver super)
+{
+    LightDriverSpy self = (LightDriverSpy)super;
+    states[self->base.id] = LIGHT_STATE_UNKNOWN;
+    free(self);
+}
+
 void LightDriverSpy_Reset(void)
 {
     int i;
@@ -33,21 +48,6 @@ void LightDriverSpy_AddSpiesToController(void)
     LightDriver spy = (LightDriver)LightDriverSpy_Create(i);
     LightController_Add(i, spy);
   }
-}
-
-LightDriver LightDriverSpy_Create(int id)
-{
-  LightDriverSpy self = (LightDriverSpy)calloc(1, sizeof(LightDriverSpyStruct));  // Huh, I wonder why I need typecasting
-  self->base.type = TestLightDriver;
-  self->base.id = id;
-  return (LightDriver)self;
-}
-
-void LightDriverSpy_Destroy(LightDriver super)
-{
-    LightDriverSpy self = (LightDriverSpy)super;
-    states[self->base.id] = LIGHT_STATE_UNKNOWN;
-    free(self);
 }
 
 static void save(int id, int state)
