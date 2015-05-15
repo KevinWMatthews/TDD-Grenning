@@ -7,4 +7,10 @@ typedef enum
   TRUE =  1
 } BOOL;
 
+#ifndef NULL
+#define NULL 0
+#endif
+
+#define CHECK_NULL(pointer) if ((pointer) == NULL) return
+
 #endif

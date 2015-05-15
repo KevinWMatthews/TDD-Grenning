@@ -1,4 +1,7 @@
-		LED Driver Tests
+		Memory Mapped LED Driver Tests
+
+Make all functions handle null pointers
+
 
 ~All LEDs off after the driver is initialized
 ~Can turn on a single LED
