@@ -53,6 +53,7 @@ void LedDriver_Destroy(LedDriver * self)
 
 void LedDriver_TurnOn(LedDriver self, uint8_t ledNumber)
 {
+  CHECK_NULL(self);
   if (isLedOutOfBounds(ledNumber))
   {
     return;
@@ -63,6 +64,7 @@ void LedDriver_TurnOn(LedDriver self, uint8_t ledNumber)
 
 void LedDriver_TurnOff(LedDriver self, uint8_t ledNumber)
 {
+  CHECK_NULL(self);
   if (isLedOutOfBounds(ledNumber))
   {
     return;
@@ -73,18 +75,21 @@ void LedDriver_TurnOff(LedDriver self, uint8_t ledNumber)
 
 void LedDriver_TurnAllOn(LedDriver self)
 {
+  CHECK_NULL(self);
   self->ledsImage |= ALL_LEDS_ON;
   updateHardware(self);
 }
 
 void LedDriver_TurnAllOff(LedDriver self)
 {
+  CHECK_NULL(self);
   self->ledsImage = 0;
   updateHardware(self);
 }
 
 BOOL LedDriver_IsOn(LedDriver self, uint8_t ledNumber)
 {
+  CHECK_NULL_RETURN_VALUE(self, FALSE);
   if (isLedOutOfBounds(ledNumber))
   {
     return FALSE;
@@ -94,6 +99,7 @@ BOOL LedDriver_IsOn(LedDriver self, uint8_t ledNumber)
 
 BOOL LedDriver_IsOff(LedDriver self, uint8_t ledNumber)
 {
+  CHECK_NULL_RETURN_VALUE(self, TRUE);
   if (isLedOutOfBounds(ledNumber))
   {
     return TRUE;

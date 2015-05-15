@@ -26,7 +26,12 @@ TEST_GROUP(LedDriver_MemoryMapped)
 //*** The Tests! ***//
 TEST(LedDriver_MemoryMapped, AllFunctionsCanHandleNullPointer)
 {
-  FAIL("Ensure that all functions can handle a null LedDriver");
+  CHECK_FALSE(LedDriver_IsOn(NULL, 1));
+  CHECK_TRUE(LedDriver_IsOff(NULL, 1));
+  LedDriver_TurnOn(NULL, 1);
+  LedDriver_TurnOff(NULL, 1);
+  LedDriver_TurnAllOn(NULL);
+  LedDriver_TurnAllOff(NULL);
 }
 
 TEST(LedDriver_MemoryMapped, Create)

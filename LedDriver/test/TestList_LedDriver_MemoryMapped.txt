@@ -1,6 +1,6 @@
 		Memory Mapped LED Driver Tests
 
-Make all functions handle null pointers
+~Make all functions handle null pointers
 
 
 ~All LEDs off after the driver is initialized
