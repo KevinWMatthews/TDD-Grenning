@@ -8,6 +8,7 @@ typedef struct LedDriverStruct
 
 typedef struct LedDriverInterfaceStruct
 {
+  void (*Destroy)(LedDriver * self);
   void (*TurnOn)(LedDriver self, uint8_t ledNumber);
   void (*TurnOff)(LedDriver self, uint8_t ledNumber);
   void (*TurnAllOn)(LedDriver self);

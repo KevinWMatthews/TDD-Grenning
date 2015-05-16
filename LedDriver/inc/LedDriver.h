@@ -14,10 +14,6 @@ typedef struct LedDriverInterfaceStruct * LedDriverInterface;
 
 const char * LedDriver_GetDriverType(LedDriver);
 
-// Create should probably belong in each specific driver.
-// The argument list for initialization will probably vary.
-LedDriver LedDriver_Create(uint16_t * address);
-
 void LedDriver_Destroy(LedDriver * self);
 void LedDriver_TurnOn(LedDriver self, uint8_t ledNumber);
 void LedDriver_TurnOff(LedDriver self, uint8_t ledNumber);

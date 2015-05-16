@@ -15,8 +15,7 @@ TEST_GROUP(LedDriver_MemoryMapped)
 
   void setup()
   {
-    ledDriver = LedDriver_Create(&virtualLeds);
-    //ledDriver = LedDriver_MemoryMapped_Create(&virtualLeds);
+    ledDriver = LedDriver_MemoryMapped_Create(&virtualLeds);
     //LedDriver_MemoryMapped_InstallInterface();
   }
 
@@ -27,6 +26,11 @@ TEST_GROUP(LedDriver_MemoryMapped)
 };
 
 //*** The Tests! ***//
+TEST(LedDriver_MemoryMapped, DriverType)
+{
+  STRCMP_EQUAL("MemoryMapped", LedDriver_GetDriverType(ledDriver));
+}
+
 TEST(LedDriver_MemoryMapped, AllFunctionsCanHandleNullPointer)
 {
   CHECK_FALSE(LedDriver_IsOn(NULL, 1));
@@ -62,7 +66,7 @@ TEST(LedDriver_MemoryMapped, CanDestroySameBufferTwice)
 TEST(LedDriver_MemoryMapped, LedsOffAfterCreate)
 {
   virtualLeds = 0xffff;
-  LedDriver_Create(&virtualLeds);
+  LedDriver_MemoryMapped_Create(&virtualLeds);
   LONGS_EQUAL(0, virtualLeds);
 }
 

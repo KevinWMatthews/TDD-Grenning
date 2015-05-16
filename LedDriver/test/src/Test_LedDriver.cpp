@@ -22,6 +22,10 @@ static LedDriver savedDriver = NONSENSE_POINTER;
 // As the name states, this function should not be called.
 // If it is, savedDriver will be changed from NONSENSE_POINTER to NULL.
 // We can test for this condition to ensure that shouldNotBeCalled is never called.
+static void shouldNotBeCalled(LedDriver * self)
+{
+  savedDriver = *self;
+}
 static void shouldNotBeCalled(LedDriver self)
 {
   savedDriver = self;
@@ -37,6 +41,7 @@ static BOOL shouldNotBeCalled_Bool(LedDriver self, uint8_t ledNumber)
 
 static LedDriverInterfaceStruct interface =
 {
+  shouldNotBeCalled,
   shouldNotBeCalled,
   shouldNotBeCalled,
   shouldNotBeCalled,

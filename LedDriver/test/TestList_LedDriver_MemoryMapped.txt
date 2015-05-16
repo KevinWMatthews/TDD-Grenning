@@ -1,6 +1,10 @@
 		Memory Mapped LED Driver Tests
 
 Convert to dynamic interface
+~Destroy function in interface?
+~Put create in each driver.
+~Look into includes. Should MemoryMapped include LedDriver?
+~Test memory mapped driver type in base: self->base.driverType = "MemoryMapped";
 
 ~Make all functions handle null pointers
 
