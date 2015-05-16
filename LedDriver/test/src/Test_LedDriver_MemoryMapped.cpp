@@ -16,7 +16,7 @@ TEST_GROUP(LedDriver_MemoryMapped)
   void setup()
   {
     ledDriver = LedDriver_MemoryMapped_Create(&virtualLeds);
-    //LedDriver_MemoryMapped_InstallInterface();
+    LedDriver_MemoryMapped_InstallInterface();
   }
 
   void teardown()

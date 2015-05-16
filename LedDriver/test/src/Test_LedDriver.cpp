@@ -50,13 +50,27 @@ static LedDriverInterfaceStruct interface =
   shouldNotBeCalled_Bool
 };
 
-static LedDriverStruct testDriver =
+static LedDriverInterfaceStruct interfaceOfNulls =
+{
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL
+};
+
+static LedDriverStruct testDriverStruct =
 {
   "Test Driver"
 };
 
+LedDriver testDriver = &testDriverStruct;
+
+
 //*** The Tests! ***//
-TEST(LedDriver, NullInterfaceDoesNotCrash)
+TEST(LedDriver, NullInterfacePointerDoesNotCrash)
 {
   LedDriver_SetInterface(NULL);
 
@@ -86,7 +100,20 @@ TEST(LedDriver, NullDriverDoesNotCrash)
   POINTERS_EQUAL(NONSENSE_POINTER, savedDriver);
 }
 
+TEST(LedDriver, InterfaceOfNullsDoesNotCrash)
+{
+  LedDriver_SetInterface(&interfaceOfNulls);
+
+  LedDriver_Destroy(&testDriver);
+  LedDriver_TurnOn(testDriver, 1);
+  LedDriver_TurnOff(testDriver, 1);
+  LedDriver_TurnAllOn(testDriver);
+  LedDriver_TurnAllOff(testDriver);
+  LedDriver_IsOn(testDriver, 1);
+  LedDriver_IsOff(testDriver, 1);
+}
+
 TEST(LedDriver, Accessors)
 {
-  STRCMP_EQUAL("Test Driver", LedDriver_GetDriverType(&testDriver));
+  STRCMP_EQUAL("Test Driver", LedDriver_GetDriverType(testDriver));
 }

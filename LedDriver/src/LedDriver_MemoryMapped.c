@@ -26,7 +26,16 @@ enum
 
 //*** File-scope function prototypes ***//
 //Macro for frequent typecast
-#define DRIVER_TYPECAST(oldVar, newVar) LedDriver_MemoryMapped oldVar = (LedDriver_MemoryMapped)newVar
+#define LED_DRIVER_TYPECAST(oldVar, newVar) LedDriver_MemoryMapped oldVar = (LedDriver_MemoryMapped)newVar
+
+//LedDriver interface functions
+static void destroy(LedDriver * self);
+static void turnOn(LedDriver instance, uint8_t ledNumber);
+static void turnOff(LedDriver instance, uint8_t ledNumber);
+static void turnAllOn(LedDriver instance);
+static void turnAllOff(LedDriver instance);
+static BOOL isOn(LedDriver instance, uint8_t ledNumber);
+static BOOL isOff(LedDriver instance, uint8_t ledNumber);
 
 //Helper functions
 static uint16_t convertLedNumberToBit(uint8_t ledNumber);
@@ -37,6 +46,16 @@ static void clearLedImageBit(LedDriver_MemoryMapped instance, int ledNumber);
 
 
 //*** File-scope variables ***//
+LedDriverInterfaceStruct interface =
+{
+  .Destroy = destroy,
+  .TurnOn = turnOn,
+  .TurnOff = turnOff,
+  .TurnAllOn = turnAllOn,
+  .TurnAllOff = turnAllOff,
+  .IsOn = isOn,
+  .IsOff = isOff
+};
 
 
 //*** Public functions ***//
@@ -50,17 +69,22 @@ LedDriver LedDriver_MemoryMapped_Create(uint16_t * address)
   return (LedDriver)self;
 }
 
-void LedDriver_Destroy(LedDriver * self)
+void LedDriver_MemoryMapped_InstallInterface(void)
 {
-  CHECK_NULL(self);
+  LedDriver_SetInterface(&interface);
+}
+
+
+//*** File-scope interface functions ***//
+static void destroy(LedDriver * self)
+{
   free(*self);
   *self = NULL;
 }
 
-void LedDriver_TurnOn(LedDriver instance, uint8_t ledNumber)
+static void turnOn(LedDriver instance, uint8_t ledNumber)
 {
-  CHECK_NULL(instance);
-  DRIVER_TYPECAST(self, instance);
+  LED_DRIVER_TYPECAST(self, instance);
   if (isLedOutOfBounds(ledNumber))
   {
     return;
@@ -69,10 +93,9 @@ void LedDriver_TurnOn(LedDriver instance, uint8_t ledNumber)
   updateHardware(self);
 }
 
-void LedDriver_TurnOff(LedDriver instance, uint8_t ledNumber)
+static void turnOff(LedDriver instance, uint8_t ledNumber)
 {
-  CHECK_NULL(instance);
-  DRIVER_TYPECAST(self, instance);
+  LED_DRIVER_TYPECAST(self, instance);
   if (isLedOutOfBounds(ledNumber))
   {
     return;
@@ -81,26 +104,23 @@ void LedDriver_TurnOff(LedDriver instance, uint8_t ledNumber)
   updateHardware(self);
 }
 
-void LedDriver_TurnAllOn(LedDriver instance)
+static void turnAllOn(LedDriver instance)
 {
-  CHECK_NULL(instance);
-  DRIVER_TYPECAST(self, instance);
+  LED_DRIVER_TYPECAST(self, instance);
   self->ledsImage |= ALL_LEDS_ON;
   updateHardware(self);
 }
 
-void LedDriver_TurnAllOff(LedDriver instance)
+static void turnAllOff(LedDriver instance)
 {
-  CHECK_NULL(instance);
-  DRIVER_TYPECAST(self, instance);
+  LED_DRIVER_TYPECAST(self, instance);
   self->ledsImage = 0;
   updateHardware(self);
 }
 
-BOOL LedDriver_IsOn(LedDriver instance, uint8_t ledNumber)
+static BOOL isOn(LedDriver instance, uint8_t ledNumber)
 {
-  CHECK_NULL_RETURN_VALUE(instance, FALSE);
-  DRIVER_TYPECAST(self, instance);
+  LED_DRIVER_TYPECAST(self, instance);
   if (isLedOutOfBounds(ledNumber))
   {
     return FALSE;
@@ -108,15 +128,14 @@ BOOL LedDriver_IsOn(LedDriver instance, uint8_t ledNumber)
   return self->ledsImage & convertLedNumberToBit(ledNumber);
 }
 
-BOOL LedDriver_IsOff(LedDriver instance, uint8_t ledNumber)
+static BOOL isOff(LedDriver instance, uint8_t ledNumber)
 {
-  CHECK_NULL_RETURN_VALUE(instance, TRUE);
-  DRIVER_TYPECAST(self, instance);
+  LED_DRIVER_TYPECAST(self, instance);
   if (isLedOutOfBounds(ledNumber))
   {
     return TRUE;
   }
-  return !LedDriver_IsOn(instance, ledNumber);  // pass instance to avoid typecast
+  return !isOn(instance, ledNumber);  // pass instance to avoid typecast
 }
 
 
