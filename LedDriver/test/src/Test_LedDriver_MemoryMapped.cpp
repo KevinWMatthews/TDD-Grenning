@@ -1,5 +1,6 @@
 extern "C"
 {
+  #include "LedDriver.h"
   #include "LedDriver_MemoryMapped.h"
 }
 
@@ -15,6 +16,8 @@ TEST_GROUP(LedDriver_MemoryMapped)
   void setup()
   {
     ledDriver = LedDriver_Create(&virtualLeds);
+    //ledDriver = LedDriver_MemoryMapped_Create(&virtualLeds);
+    //LedDriver_MemoryMapped_InstallInterface();
   }
 
   void teardown()
