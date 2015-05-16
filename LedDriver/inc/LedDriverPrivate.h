@@ -3,7 +3,7 @@
 
 typedef struct LedDriverStruct
 {
-  const char * type;
+  const char * driverType;
 } LedDriverStruct;
 
 typedef struct LedDriverInterfaceStruct

@@ -26,6 +26,29 @@ static void shouldNotBeCalled(LedDriver self)
 {
   savedDriver = self;
 }
+static void shouldNotBeCalled(LedDriver self, uint8_t ledNumber)
+{
+  savedDriver = self;
+}
+static BOOL shouldNotBeCalled_Bool(LedDriver self, uint8_t ledNumber)
+{
+  savedDriver = self;
+}
+
+static LedDriverInterfaceStruct interface =
+{
+  shouldNotBeCalled,
+  shouldNotBeCalled,
+  shouldNotBeCalled,
+  shouldNotBeCalled,
+  shouldNotBeCalled_Bool,
+  shouldNotBeCalled_Bool
+};
+
+static LedDriverStruct testDriver =
+{
+  "Test Driver"
+};
 
 //*** The Tests! ***//
 TEST(LedDriver, NullInterfaceDoesNotCrash)
@@ -41,4 +64,24 @@ TEST(LedDriver, NullInterfaceDoesNotCrash)
   LedDriver_IsOff(NULL, 1);
 
   POINTERS_EQUAL(NONSENSE_POINTER, savedDriver);
+}
+
+TEST(LedDriver, NullDriverDoesNotCrash)
+{
+  LedDriver_SetInterface(&interface);
+
+  LedDriver_Destroy(NULL);
+  LedDriver_TurnOn(NULL, 1);
+  LedDriver_TurnOff(NULL, 1);
+  LedDriver_TurnAllOn(NULL);
+  LedDriver_TurnAllOff(NULL);
+  LedDriver_IsOn(NULL, 1);
+  LedDriver_IsOff(NULL, 1);
+
+  POINTERS_EQUAL(NONSENSE_POINTER, savedDriver);
+}
+
+TEST(LedDriver, Accessors)
+{
+  STRCMP_EQUAL("Test Driver", LedDriver_GetDriverType(&testDriver));
 }
